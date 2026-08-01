@@ -84,6 +84,7 @@ header{
 .btn:disabled{opacity:.45;pointer-events:none}
 .row{display:flex;gap:8px;flex-wrap:wrap}
 .muted{color:var(--ink-3);font-size:13px}
+.aiMsg{display:block;white-space:pre-wrap;word-break:break-word;line-height:1.7;font-size:13px;margin-top:8px}
 .empty{text-align:center;padding:38px 20px;color:var(--ink-4)}
 .empty p{margin:10px 0 0;font-size:14px}
 .pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:650;padding:2.5px 9px;border-radius:20px;background:var(--line-2);color:var(--ink-2)}
@@ -451,8 +452,8 @@ header{
       </div>
       <div class="row" style="margin-top:12px">
         <button class="btn sm" id="btnTest">测试连接</button>
-        <span class="muted" id="testMsg" style="align-self:center"></span>
       </div>
+      <div class="aiMsg" id="testMsg"></div>
     </div>
 
     <div class="card pad sec">
@@ -577,8 +578,8 @@ header{
       </div>
       <div class="row" style="margin-top:13px">
         <button class="btn sm" id="wTest">测试一下能不能用</button>
-        <span class="muted" id="wTestMsg" style="align-self:center"></span>
       </div>
+      <div class="aiMsg" id="wTestMsg"></div>
       <div class="wnote">
         <b>去哪弄 Key？</b> OpenAI、DeepSeek、通义千问、Kimi 都行，注册后在控制台生成一个粘过来。<br>
         国内用户推荐 <b>DeepSeek</b>（便宜）；也支持本机 Ollama / LM Studio，完全离线。<br>
@@ -743,9 +744,68 @@ async function callAI(messages,model){
     headers:{'Content-Type':'application/json','Authorization':'Bearer '+settings.key},
     body:JSON.stringify({model:model||settings.modelT,messages,temperature:0.3,max_tokens:1200})
   });
-  if(!r.ok){const t=await r.text().catch(()=>'');throw new Error('HTTP '+r.status+' '+t.slice(0,160));}
-  const j=await r.json();
-  return (j.choices&&j.choices[0]&&j.choices[0].message.content)||'';
+  if(!r.ok){const t=await r.text().catch(()=>'');const err=new Error('HTTP '+r.status+' '+(t||'').slice(0,200));err.aiStatus=r.status;err.aiDetail=t;throw err;}
+  try{
+    const j=await r.json();
+    return (j.choices&&j.choices[0]&&j.choices[0].message.content)||'';
+  }catch(_){
+    const err=new Error('返回内容不是标准 JSON');err.aiKind='badjson';err.aiDetail='';throw err;
+  }
+}
+/* 把 API/Key 报错翻译成普通人看得懂的提示：发生了什么 + 下一步怎么解决
+   返回 {short: 一句话（给 toast）, long: 多行详细说明（给设置/向导的测试区）} */
+function aiErr(e){
+  const msg=(e&&e.message)||'';
+  const st=e&&e.aiStatus;
+  // 没有 HTTP 状态码：解析失败 或 网络层 / 跨域 / 断网（fetch 直接抛 TypeError）
+  if(!st){
+    // callAI 内部 JSON 解析失败
+    if(e&&e.aiKind==='badjson'){
+      return {short:'AI 返回的内容读不懂', long:
+'AI 服务返回的东西，程序读不懂（不是标准 JSON）。\n\n可能是：\n'+
+'• Base URL 填成了网页首页，而不是 /chat/completions 接口\n'+
+'• 服务返回了报错页或登录页\n\n下一步：把 Base URL 改成接口的完整地址（类似 https://xxx/v1），再点「测试连接」。'};
+    }
+    if(/Failed to fetch|NetworkError|network|TypeError|加载|load/i.test(msg)){
+      return {short:'连不上这个 AI 地址', long:
+'连不上这个 AI 服务（网络 / 跨域被拦）。\n\n可能是这几种情况：\n'+
+'• Base URL（接口地址）拼错了\n'+
+'• 你的网络访问不到这个服务（有些需要代理 / VPN）\n'+
+'• 这个服务没开「跨域 CORS」权限，浏览器会直接拦掉\n\n下一步：\n'+
+'1. 回到设置，核对 Base URL —— 必须是 OpenAI 兼容接口，常见以 /v1 结尾\n'+
+'2. 点「测试连接」看看能不能通\n'+
+'3. 如果是自己搭的服务，确认已开启 CORS'};
+    }
+    return {short:msg.slice(0,60)||'出错了', long:msg+'\n\n如果反复出现，去设置页用「测试连接」排查，或刷新页面重试。'};
+  }
+  switch(st){
+    case 400: return {short:'请求格式不对 (400)', long:
+'AI 服务说我们的请求格式有问题 (400)。\n\n最常见原因：\n'+
+'• 选的「模型名」填错了 —— 模型名要一字不差（区分大小写）\n\n下一步：去设置核对「视觉模型 / 翻译模型」的名字，是否和你用的平台一致。'};
+    case 401: return {short:'API Key 无效或没填 (401)', long:
+'AI 服务拒绝了你的 Key —— 这是最常见的 401。\n\n说明：Key 不对、过期了，或者干脆没填。\n\n下一步：\n'+
+'1. 去你用的 AI 平台控制台（OpenAI / DeepSeek / 通义 / Kimi 等）复制一个全新的 Key\n'+
+'2. 回到本工具的「设置」或「首次向导」，把 Key 重新粘贴进去\n'+
+'3. 点「测试连接」，变成绿色再重试'};
+    case 403: return {short:'这个 Key 没权限 (403)', long:
+'Key 本身认得出来，但没权限用这个模型 (403)。\n\n下一步：\n'+
+'• 确认订阅 / 余额还够用\n'+
+'• 有些平台要在后台单独打开「API 访问」开关\n'+
+'• 换一个你有权限的模型名试试'};
+    case 404: return {short:'地址或模型找不到 (404)', long:
+'接口或模型不存在 (404)。\n\n可能是：\n'+
+'• Base URL 末尾少了 /v1 之类\n'+
+'• 模型名填错，这个平台根本没有那个模型\n\n下一步：核对 Base URL（以能连通 /chat/completions 为准），模型名换成平台实际有的。'};
+    case 429: return {short:'调用太频繁 / 额度用完 (429)', long:
+'被限流了 (429) —— 要么是短时间内调用太多，要么是额度 / 余额用光了。\n\n下一步：\n'+
+'• 等一两分钟再试\n'+
+'• 去平台看看余额是不是 0 了\n'+
+'• 免费 Key 限额通常很紧，考虑充值或换 Key'};
+    case 500: case 502: case 503: case 504: return {short:'AI 服务端出错 ('+st+')', long:
+'不是你的问题，是 AI 服务端自己挂了 ('+st+')。\n\n下一步：稍等几分钟再试；如果一直不行，可能是这个平台在临时维护。'};
+    default: return {short:'AI 返回错误 ('+st+')', long:
+'AI 服务返回了错误码 '+st+'。\n\n详情：'+((e&&e.aiDetail)||msg||'无')+'\n\n可以尝试：检查 Key、模型名、地址，或换个网络重试。'};
+  }
 }
 function parseJSON(txt){
   let t=txt.trim().replace(/^```(json)?/i,'').replace(/```$/,'').trim();
@@ -772,8 +832,7 @@ async function aiRecognize(){
     toast('识别完成，检查一下再保存');
     $('#formCard').scrollIntoView({behavior:'smooth',block:'start'});
   }catch(e){
-    toast('识别失败：'+e.message,1);
-    console.error(e);
+    const er=aiErr(e); toast('识别失败：'+er.short,1); console.error(er.long);
   }finally{btn.disabled=false;btn.innerHTML=old;}
 }
 async function aiTranslate(){
@@ -790,7 +849,7 @@ async function aiTranslate(){
     if(d.nameEn)$('#fNameEn').value=d.nameEn;
     if(d.descEn)$('#fDescEn').value=d.descEn;
     toast('翻译完成');
-  }catch(e){toast('翻译失败：'+e.message,1)}
+  }catch(e){const er=aiErr(e);toast('翻译失败：'+er.short,1);console.error(er.long)}
   finally{b.disabled=false;b.innerHTML=old;}
 }
 
@@ -1061,7 +1120,7 @@ async function openDetail(id){
       const d=parseJSON(out);
       if(d.nameEn)$('#dNameEn').value=d.nameEn; if(d.descEn)$('#dDescEn').value=d.descEn;
       toast('翻译完成，记得保存');
-    }catch(e){toast('翻译失败：'+e.message,1)}
+    }catch(e){const er=aiErr(e);toast('翻译失败：'+er.short,1);console.error(er.long)}
     finally{b.disabled=false;b.textContent='中译英'}
   };
 
@@ -1486,7 +1545,7 @@ function bindWizard(){
       const r=await callAI([{role:'user',content:'回复两个字：正常'}],settings.modelT);
       m.textContent='能用 ✓ '+r.trim().slice(0,16); m.style.color='#057a55';
     }catch(e){
-      m.textContent='连不上：'+e.message.slice(0,60); m.style.color='#e02424';
+      const er=aiErr(e); m.textContent=er.long; m.style.color='#e02424';
       Object.assign(settings,bak);
     }
   };
@@ -1551,7 +1610,7 @@ function bind(){
     try{
       const r=await callAI([{role:'user',content:'回复两个字：正常'}],settings.modelT);
       m.textContent='连接正常：'+r.trim().slice(0,20); m.style.color='#057a55';
-    }catch(e){m.textContent='失败：'+e.message.slice(0,80); m.style.color='#e02424';}
+    }catch(e){const er=aiErr(e);m.textContent=er.long;m.style.color='#e02424';}
   };
   function applySettingsSilent(){
     settings.url=$('#sUrl').value.trim()||DEF_SET.url;
