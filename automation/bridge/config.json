@@ -1,0 +1,16 @@
+{
+  "port": 8891,
+  "chromeProfileDir": "C:\\Users\\h\\AppData\\Local\\ResellBridge\\chrome-profile",
+  "chromeExecutable": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "kijiji": {
+    "email": "",
+    "password": ""
+  },
+  "pacing": {
+    "minDelayMs": 5000,
+    "maxDelayMs": 12000
+  },
+  "platforms": ["fb", "kijiji", "xhs", "karrot"],
+  "logDir": "logs",
+  "maxImages": 8
+}

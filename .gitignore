@@ -1,0 +1,30 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Node (bridge)
+automation/bridge/node_modules/
+automation/bridge/logs/*.log
+automation/bridge/logs/*.png
+automation/bridge/logs/*.json
+automation/bridge/chrome-profile/
+
+# Secrets — never commit your bridge config with real credentials
+automation/bridge/config.local.json
+
+# WorkBuddy internal memory (project-private, never public)
+.workbuddy/
+
+# Temp / test artifacts
+tmpchk.js
+*.tmp
+.playwright-mcp/
+
+# Old build output (the public app lives at index.html now)
+outputs/

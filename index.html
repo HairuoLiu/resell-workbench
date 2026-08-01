@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="二手转卖台">
+<meta name="theme-color" content="#0e9f6e">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e9f6e'/%3E%3Cpath d='M8 11h16l-1.4 11.5a2 2 0 0 1-2 1.5H11.4a2 2 0 0 1-2-1.5L8 11z' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linejoin='round'/%3E%3Cpath d='M12.5 11V9.4A3.5 3.5 0 0 1 16 6a3.5 3.5 0 0 1 3.5 3.4V11' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E">
+<title>二手转卖工作台</title>
+<style>
+:root{
+  --brand:#0e9f6e; --brand-d:#057a55; --brand-l:#def7ec;
+  --ink:#111827; --ink-2:#374151; --ink-3:#6b7280; --ink-4:#9ca3af;
+  --line:#e5e7eb; --line-2:#f3f4f6; --bg:#f7f8fa; --card:#ffffff;
+  --red:#e02424; --red-l:#fde8e8; --amber:#c27803; --amber-l:#fdf6b2;
+  --blue:#1c64f2; --blue-l:#e1effe; --purple:#7e3af2; --purple-l:#edebfe;
+  --r:14px; --sh:0 1px 3px rgba(16,24,40,.06),0 1px 2px rgba(16,24,40,.04);
+  --sh-2:0 8px 24px rgba(16,24,40,.10);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg); color:var(--ink); font-size:15px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font-family:inherit;font-size:16px;color:inherit}
+button{cursor:pointer;border:none;background:none}
+h1,h2,h3,h4{margin:0;font-weight:650;letter-spacing:-.01em}
+svg{display:block;flex:none}
+.app{max-width:1180px;margin:0 auto;padding:0 16px 120px}
+
+/* ---------- header ---------- */
+header{
+  position:sticky;top:0;z-index:40;background:rgba(247,248,250,.88);
+  backdrop-filter:saturate(180%) blur(12px);
+  margin:0 -16px;padding:12px 16px;border-bottom:1px solid var(--line);
+}
+.hdr{display:flex;align-items:center;gap:12px;max-width:1148px;margin:0 auto}
+.logo{width:34px;height:34px;border-radius:9px;background:var(--brand);display:grid;place-items:center;flex:none}
+.hdr h1{font-size:17px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr h1 span{font-size:12px;color:var(--ink-3);font-weight:500;margin-left:8px}
+.hbtns{display:flex;gap:6px;flex:none}
+.ib{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:var(--card);border:1px solid var(--line);color:var(--ink-2);transition:.15s}
+.ib:hover{background:var(--line-2);color:var(--ink)}
+.ib.on{background:var(--brand);border-color:var(--brand);color:#fff}
+#bridgeDot.on{background:#0e9f6e;box-shadow:0 0 0 3px rgba(14,159,110,.18)}
+#bridgeDot.off{background:#e02424;box-shadow:0 0 0 3px rgba(224,36,36,.18)}
+.autobar{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px;background:linear-gradient(180deg,#f8fafc,#fff)}
+.ab-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ab-t{font-weight:700;font-size:15px}
+.ab-s{font-size:12px;padding:3px 9px;border-radius:20px;background:#f3f4f6;color:var(--muted)}
+.ab-s.on{background:#def7ec;color:#057a55}
+.ab-s.off{background:#fde8e8;color:#c81e1e}
+.ab-pk{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px}
+.ab-c{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;user-select:none;min-height:32px}
+.ab-c input{width:17px;height:17px;cursor:pointer;accent-color:var(--brand)}
+.ab-log{margin-top:12px;border-top:1px solid var(--line);padding-top:10px;font-size:12.5px;line-height:1.9}
+.ab-log .l{display:flex;gap:8px;align-items:baseline}
+.ab-log .l b{min-width:74px}
+.ab-log .ok{color:#057a55}
+.ab-log .er{color:#c81e1e}
+@media(max-width:768px){.ab-pk{gap:10px}.ab-c{min-height:40px;font-size:14px}}
+
+/* ---------- generic ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.sec{margin-top:16px}
+.sec-h{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:0 2px}
+.sec-h h2{font-size:15px}
+.sec-h .cnt{font-size:12px;color:var(--ink-3);font-weight:600;background:var(--line-2);padding:1px 8px;border-radius:20px}
+.sec-h .sp{flex:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 16px;border-radius:11px;font-size:14.5px;font-weight:600;background:var(--card);border:1px solid var(--line);color:var(--ink-2);transition:.15s;white-space:nowrap}
+.btn:hover{background:var(--line-2)}
+.btn:active{transform:scale(.98)}
+.btn.pri{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.pri:hover{background:var(--brand-d)}
+.btn.dgr{background:#fff;border-color:#fbd5d5;color:var(--red)}
+.btn.dgr:hover{background:var(--red-l)}
+.btn.sm{min-height:36px;padding:0 11px;font-size:13.5px;border-radius:9px;gap:5px}
+.btn.xs{min-height:32px;padding:0 9px;font-size:12.5px;border-radius:8px;gap:4px}
+.btn:disabled{opacity:.45;pointer-events:none}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.muted{color:var(--ink-3);font-size:13px}
+.empty{text-align:center;padding:38px 20px;color:var(--ink-4)}
+.empty p{margin:10px 0 0;font-size:14px}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:650;padding:2.5px 9px;border-radius:20px;background:var(--line-2);color:var(--ink-2)}
+.pill.g{background:var(--brand-l);color:var(--brand-d)}
+.pill.r{background:var(--red-l);color:var(--red)}
+.pill.a{background:var(--amber-l);color:var(--amber)}
+.pill.b{background:var(--blue-l);color:var(--blue)}
+.pill.p{background:var(--purple-l);color:var(--purple)}
+
+/* ---------- today ---------- */
+#today{margin-top:16px}
+.today-card{padding:14px 16px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);box-shadow:var(--sh)}
+.today-card.hot{border-color:#fbd5d5;background:linear-gradient(180deg,#fff8f8,#fff)}
+.today-h{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.today-h h2{font-size:15px}
+.tlist{display:flex;flex-direction:column;gap:8px}
+.titem{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;background:var(--line-2);border:1px solid transparent}
+.titem.red{background:var(--red-l);border-color:#fbd5d5}
+.titem.amb{background:var(--amber-l);border-color:#fce96a}
+.tdot{width:8px;height:8px;border-radius:50%;background:var(--ink-4);flex:none}
+.titem.red .tdot{background:var(--red)}
+.titem.amb .tdot{background:var(--amber)}
+.titem .tx{flex:1;min-width:0;font-size:14px;font-weight:550}
+.titem .tx b{font-weight:700}
+.titem .tsub{font-size:12px;color:var(--ink-3);font-weight:400;display:block;margin-top:1px}
+.titem.red .tsub{color:#9b1c1c}
+.allclear{display:flex;align-items:center;gap:10px;padding:14px;border-radius:11px;background:var(--brand-l);color:var(--brand-d);font-weight:600;font-size:14px}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:4px;margin:18px 0 14px;background:var(--card);padding:4px;border-radius:12px;border:1px solid var(--line);box-shadow:var(--sh)}
+.tabs button{flex:1;min-height:42px;border-radius:9px;font-size:14px;font-weight:600;color:var(--ink-3);display:flex;align-items:center;justify-content:center;gap:6px;transition:.15s}
+.tabs button.on{background:var(--brand);color:#fff}
+.tabs .bdg{font-size:11px;font-weight:700;background:var(--red);color:#fff;padding:0 6px;border-radius:20px;min-width:18px;height:18px;display:grid;place-items:center}
+.tabs button.on .bdg{background:rgba(255,255,255,.28)}
+.view{display:none}.view.on{display:block}
+
+/* ---------- form ---------- */
+.fgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.f{display:flex;flex-direction:column;gap:5px}
+.f.full{grid-column:1/-1}
+.f label{font-size:12.5px;font-weight:650;color:var(--ink-2);display:flex;align-items:center;gap:5px}
+.f label .hint{font-weight:400;color:var(--ink-4);font-size:11.5px}
+.f input,.f select,.f textarea{
+  width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;
+  font-size:16px;outline:none;transition:.15s;min-height:44px;
+}
+.f textarea{min-height:82px;resize:vertical;line-height:1.6}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(14,159,110,.12)}
+.pad{padding:16px}
+
+/* ---------- dropzone ---------- */
+.dz{border:2px dashed var(--line);border-radius:12px;padding:26px 16px;text-align:center;background:#fcfcfd;transition:.15s;cursor:pointer}
+.dz:hover,.dz.over{border-color:var(--brand);background:var(--brand-l)}
+.dz p{margin:8px 0 0;font-size:14px;font-weight:600;color:var(--ink-2)}
+.dz small{color:var(--ink-4);font-size:12px}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;margin-top:12px}
+.th{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--line-2);border:1px solid var(--line)}
+.th img{width:100%;height:100%;object-fit:cover;display:block}
+.th .del{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:rgba(17,24,39,.72);color:#fff;display:grid;place-items:center}
+.th .no{position:absolute;bottom:3px;left:4px;font-size:10px;font-weight:700;color:#fff;background:rgba(17,24,39,.6);padding:0 5px;border-radius:5px}
+
+/* ---------- item card ---------- */
+.items{display:flex;flex-direction:column;gap:10px}
+.icard{display:flex;gap:12px;padding:12px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);box-shadow:var(--sh);transition:.15s}
+.icard:hover{box-shadow:var(--sh-2)}
+.icard.warn{border-color:#fbd5d5}
+.ithumb{width:76px;height:76px;border-radius:10px;background:var(--line-2);flex:none;overflow:hidden;display:grid;place-items:center;color:var(--ink-4)}
+.ithumb img{width:100%;height:100%;object-fit:cover}
+.ibody{flex:1;min-width:0}
+.ititle{font-size:15px;font-weight:650;margin-bottom:3px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.iprice{color:var(--brand-d);font-weight:750}
+.imeta{font-size:12.5px;color:var(--ink-3);margin-bottom:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.iacts{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ---------- platform grid ---------- */
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.pcell{padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:#fcfcfd;text-align:left;transition:.15s;min-height:62px}
+.pcell:hover{border-color:var(--ink-4)}
+.pcell .pn{font-size:11.5px;font-weight:700;color:var(--ink-3);display:flex;align-items:center;gap:4px;margin-bottom:3px}
+.pcell .ps{font-size:12.5px;font-weight:650}
+.pcell[data-s="pending"]{background:#fcfcfd}
+.pcell[data-s="pending"] .ps{color:var(--ink-4)}
+.pcell[data-s="posted"]{background:var(--brand-l);border-color:#a8e6cf}
+.pcell[data-s="posted"] .ps{color:var(--brand-d)}
+.pcell[data-s="failed"]{background:var(--red-l);border-color:#fbd5d5}
+.pcell[data-s="failed"] .ps{color:var(--red)}
+.pcell[data-s="sold"]{background:var(--blue-l);border-color:#c3ddfd}
+.pcell[data-s="sold"] .ps{color:var(--blue)}
+.pcell[data-s="skip"]{opacity:.5}
+
+/* ---------- modal ---------- */
+.mask{position:fixed;inset:0;background:rgba(17,24,39,.45);z-index:100;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+.mask.on{display:flex}
+.modal{background:var(--bg);width:100%;max-width:720px;max-height:92vh;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--sh-2)}
+.modal-h{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--card);border-bottom:1px solid var(--line);flex:none}
+.modal-h h3{font-size:16px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.modal-b{overflow-y:auto;padding:16px;flex:1;-webkit-overflow-scrolling:touch}
+.modal-f{padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:var(--card);border-top:1px solid var(--line);display:flex;gap:8px;flex:none}
+.modal-f .btn{flex:1}
+@media(min-width:721px){.mask{align-items:center}.modal{border-radius:18px;max-height:88vh}}
+
+/* ---------- setup wizard ---------- */
+#mWizard{background:rgba(17,24,39,.62);align-items:center;z-index:200}
+.wiz{background:var(--card);width:100%;max-width:560px;max-height:94vh;border-radius:18px;
+  display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--sh-2);margin:0 12px}
+.wiz-top{padding:20px 22px 0;flex:none}
+.wiz-dots{display:flex;gap:6px;margin-bottom:16px}
+.wiz-dots i{height:4px;flex:1;border-radius:4px;background:var(--line);transition:.25s}
+.wiz-dots i.on{background:var(--brand)}
+.wiz-b{overflow-y:auto;padding:0 22px 4px;flex:1;-webkit-overflow-scrolling:touch}
+.wiz-f{padding:16px 22px calc(16px + env(safe-area-inset-bottom));display:flex;gap:8px;flex:none;
+  border-top:1px solid var(--line-2);background:var(--card)}
+.wiz-f .btn{flex:1;min-height:46px;font-size:15px}
+.wiz-f .btn.gh{flex:0 0 auto;padding:0 16px}
+.wstep{display:none}
+.wstep.on{display:block;animation:wfade .22s ease}
+@keyframes wfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.wiz h2{font-size:21px;margin:0 0 6px;letter-spacing:-.02em}
+.wiz .wsub{color:var(--ink-3);font-size:14px;margin:0 0 18px;line-height:1.6}
+.wiz-hero{width:56px;height:56px;border-radius:15px;background:var(--brand-l);
+  display:grid;place-items:center;margin-bottom:14px}
+.wiz-list{list-style:none;padding:0;margin:0 0 4px;display:flex;flex-direction:column;gap:11px}
+.wiz-list li{display:flex;gap:11px;align-items:flex-start;font-size:14px;line-height:1.55}
+.wiz-list .wi{width:26px;height:26px;border-radius:8px;flex:none;display:grid;place-items:center;margin-top:1px}
+.wiz-list .wi.g{background:var(--brand-l);color:var(--brand-d)}
+.wiz-list .wi.b{background:var(--blue-l);color:var(--blue)}
+.wiz-list .wi.a{background:var(--amber-l);color:var(--amber)}
+.wiz-list b{display:block;font-weight:650;margin-bottom:1px}
+.wiz-list span{color:var(--ink-3)}
+.wnote{background:var(--line-2);border-radius:11px;padding:12px 14px;font-size:13px;
+  color:var(--ink-2);line-height:1.6;margin:16px 0 0}
+.wnote.amber{background:var(--amber-l);color:#78350f}
+.wnote.green{background:var(--brand-l);color:#014737}
+.wskip{background:none;color:var(--ink-3);font-size:13.5px;text-decoration:underline;
+  text-underline-offset:3px;padding:6px 2px;align-self:center}
+.wskip:hover{color:var(--ink)}
+.wiz .fgrid{gap:13px}
+.wiz .f label{font-size:13px}
+.wreq{color:var(--red);margin-left:2px}
+@media(max-width:520px){
+  .wiz{max-height:96vh;margin:0 8px}
+  .wiz h2{font-size:19px}
+  .wiz-top{padding:16px 17px 0}.wiz-b{padding:0 17px 4px}.wiz-f{padding:14px 17px calc(14px + env(safe-area-inset-bottom))}
+}
+
+/* ---------- copy block ---------- */
+.cblock{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;margin-bottom:10px}
+.cb-h{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--line-2);border-bottom:1px solid var(--line)}
+.cb-h .nm{font-size:13.5px;font-weight:700;flex:1;display:flex;align-items:center;gap:6px}
+.cb-b{padding:11px 12px;font-size:13px;line-height:1.65;white-space:pre-wrap;word-break:break-word;color:var(--ink-2);max-height:200px;overflow-y:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.cb-f{display:flex;gap:6px;padding:9px 12px;border-top:1px solid var(--line-2);flex-wrap:wrap}
+.plogo{width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:10px;font-weight:800;color:#fff;flex:none}
+.plogo.fb{background:#1877f2}.plogo.kj{background:#3e2a56}.plogo.xhs{background:#ff2442}.plogo.kr{background:#ff6f0f}
+
+/* ---------- report ---------- */
+.rpt{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;line-height:1.7;white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;max-height:320px;overflow-y:auto}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.sbox{padding:12px;border-radius:12px;background:var(--card);border:1px solid var(--line);text-align:center}
+.sbox .n{font-size:22px;font-weight:750;line-height:1.2}
+.sbox .l{font-size:11.5px;color:var(--ink-3);font-weight:600;margin-top:2px}
+.sbox.g .n{color:var(--brand-d)}.sbox.r .n{color:var(--red)}.sbox.a .n{color:var(--amber)}.sbox.b .n{color:var(--blue)}
+
+/* ---------- toast ---------- */
+#toast{position:fixed;left:50%;bottom:96px;transform:translate(-50%,20px);z-index:200;opacity:0;pointer-events:none;transition:.25s}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#toast .t{background:var(--ink);color:#fff;padding:11px 18px;border-radius:11px;font-size:14px;font-weight:600;box-shadow:var(--sh-2);display:flex;align-items:center;gap:8px;max-width:88vw}
+#toast .t.err{background:var(--red)}
+
+/* ---------- bottom nav (mobile) ---------- */
+.bnav{display:none}
+@media(max-width:768px){
+  .app{padding:0 12px 96px}
+  header{margin:0 -12px;padding:10px 12px}
+  .hdr h1{font-size:15.5px}.hdr h1 span{display:none}
+  .fgrid{grid-template-columns:1fr}
+  .pgrid{grid-template-columns:repeat(2,1fr)}
+  .stat{grid-template-columns:repeat(2,1fr)}
+  .tabs{display:none}
+  .bnav{
+    display:flex;position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(255,255,255,.94);
+    backdrop-filter:blur(12px);border-top:1px solid var(--line);
+    padding:6px 6px calc(6px + env(safe-area-inset-bottom));
+  }
+  .bnav button{flex:1;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--ink-4);font-size:11px;font-weight:650;border-radius:10px;position:relative}
+  .bnav button.on{color:var(--brand)}
+  .bnav .bdg{position:absolute;top:4px;right:50%;margin-right:-24px;font-size:10px;font-weight:700;background:var(--red);color:#fff;padding:0 5px;border-radius:20px;min-width:16px;height:16px;display:grid;place-items:center}
+  .icard{padding:11px}
+  .ithumb{width:64px;height:64px}
+  #toast{bottom:110px}
+}
+@media(max-width:400px){.pgrid{grid-template-columns:1fr}}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <div class="logo">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18l-1.5 12.5a2 2 0 0 1-2 1.5H6.5a2 2 0 0 1-2-1.5L3 6z"/><path d="M8 6V4.5A3.5 3.5 0 0 1 11.5 1h1A3.5 3.5 0 0 1 16 4.5V6"/></svg>
+    </div>
+    <h1>二手转卖工作台<span id="hdrCount"></span></h1>
+    <div class="hbtns">
+      <button class="ib" id="btnExport" title="导出 JSON 备份">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+      <button class="ib" id="btnImport" title="导入恢复">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </button>
+      <button class="ib" id="btnSettings" title="设置">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+      <button class="ib" id="btnBridge" title="桥接服务状态（真·一键发布）">
+        <span id="bridgeDot" style="width:9px;height:9px;border-radius:50%;background:#9ca3af;display:inline-block"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="app">
+
+  <!-- ============ 今天要处理 ============ -->
+  <section id="today"></section>
+
+  <!-- ============ tabs ============ -->
+  <nav class="tabs">
+    <button data-v="capture" class="on">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg>
+      录入 &amp; AI识别
+    </button>
+    <button data-v="review">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      人工审核<span class="bdg hide" id="bdgReview">0</span>
+    </button>
+    <button data-v="track">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      上架追踪<span class="bdg hide" id="bdgTrack">0</span>
+    </button>
+  </nav>
+
+  <!-- ============ VIEW 1 录入 ============ -->
+  <div class="view on" id="v-capture">
+    <div class="card pad">
+      <div class="sec-h" style="margin-bottom:12px">
+        <h2>1 · 上传物品照片</h2><div class="sp"></div>
+        <span class="muted">最多 9 张，自动压缩</span>
+      </div>
+      <div class="dz" id="dz">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0e9f6e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg>
+        <p>点击或拖拽照片到这里</p>
+        <small>手机上会直接唤起相机 / 相册</small>
+      </div>
+      <input type="file" id="fileIn" accept="image/*" multiple class="hide">
+      <div class="thumbs" id="thumbs"></div>
+
+      <div class="row" style="margin-top:14px">
+        <button class="btn pri" id="btnAI" style="flex:1">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z"/></svg>
+          AI 识别照片
+        </button>
+        <button class="btn" id="btnManual">手动填写</button>
+      </div>
+      <p class="muted" style="margin:9px 2px 0" id="aiHint"></p>
+    </div>
+
+    <div class="card pad sec" id="formCard">
+      <div class="sec-h" style="margin-bottom:12px">
+        <h2>2 · 物品信息</h2><div class="sp"></div>
+        <button class="btn xs" id="btnTrans">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          中译英
+        </button>
+      </div>
+      <div class="fgrid">
+        <div class="f"><label>物品名称（中文）</label><input id="fNameZh" placeholder="宜家 MICKE 书桌"></div>
+        <div class="f"><label>物品名称（英文）<span class="hint">发 FB/Kijiji 用</span></label><input id="fNameEn" placeholder="IKEA MICKE Desk"></div>
+        <div class="f"><label>品牌</label><input id="fBrand" placeholder="IKEA"></div>
+        <div class="f"><label>分类</label>
+          <select id="fCat">
+            <option>家具</option><option>电子产品</option><option>家电</option><option>厨房用品</option>
+            <option>服饰鞋包</option><option>图书教材</option><option>运动户外</option><option>母婴</option><option>其他</option>
+          </select>
+        </div>
+        <div class="f"><label>成色</label>
+          <select id="fCond">
+            <option>全新未拆</option><option>几乎全新</option><option>9成新</option><option>8成新</option><option>7成新</option><option>有明显使用痕迹</option>
+          </select>
+        </div>
+        <div class="f"><label>售价 <span class="hint" id="curHint">CAD</span></label><input id="fPrice" type="number" inputmode="decimal" min="0" step="1" placeholder="45"></div>
+        <div class="f full"><label>中文描述 <span class="hint">小红书用</span></label><textarea id="fDescZh" placeholder="用了一年多，桌面无划痕，抽屉滑轨正常。搬家出，自提。"></textarea></div>
+        <div class="f full"><label>英文描述 <span class="hint">FB / Kijiji / Karrot 用</span></label><textarea id="fDescEn" placeholder="Used for about a year, no scratches on the top, drawer slides work fine. Moving out, pickup only."></textarea></div>
+        <div class="f full"><label>自提地点</label><input id="fLoc" placeholder="Waterloo, ON"></div>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn pri" id="btnSave" style="flex:1">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          保存，送去人工审核
+        </button>
+        <button class="btn" id="btnReset">清空表单</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ VIEW 2 审核 ============ -->
+  <div class="view" id="v-review">
+    <div class="sec-h"><h2>待你审核</h2><span class="cnt" id="cntReview">0</span></div>
+    <div class="items" id="listReview"></div>
+
+    <div class="sec-h" style="margin-top:22px"><h2>已通过 · 待上架</h2><span class="cnt" id="cntApproved">0</span></div>
+    <div class="items" id="listApproved"></div>
+  </div>
+
+  <!-- ============ VIEW 3 追踪 ============ -->
+  <div class="view" id="v-track">
+    <div class="stat" id="statBox"></div>
+    <div class="row" style="margin-bottom:14px">
+      <button class="btn pri sm" id="btnReport">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        生成上架战报
+      </button>
+      <button class="btn sm" id="btnRetryAll">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        失败项全部重置为待发
+      </button>
+    </div>
+    <div class="items" id="listTrack"></div>
+  </div>
+</div>
+
+<!-- ============ bottom nav ============ -->
+<nav class="bnav">
+  <button data-v="capture" class="on">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg>录入
+  </button>
+  <button data-v="review">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>审核<span class="bdg hide" id="bdgReview2">0</span>
+  </button>
+  <button data-v="track">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>上架<span class="bdg hide" id="bdgTrack2">0</span>
+  </button>
+</nav>
+
+<!-- ============ modals ============ -->
+<div class="mask" id="mDetail"><div class="modal">
+  <div class="modal-h"><h3 id="dTitle">物品详情</h3>
+    <button class="ib" data-close><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="modal-b" id="dBody"></div>
+  <div class="modal-f" id="dFoot"></div>
+</div></div>
+
+<div class="mask" id="mSettings"><div class="modal">
+  <div class="modal-h"><h3>设置</h3>
+    <button class="ib" data-close><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="modal-b">
+    <div class="card pad">
+      <div class="sec-h" style="margin-bottom:12px"><h2>AI 识图 / 翻译服务</h2></div>
+      <p class="muted" style="margin:0 0 12px">兼容 OpenAI 格式的任意服务都能接：OpenAI、通义千问、DeepSeek、Kimi、或本地 Ollama / LM Studio。Key 只存在你自己的浏览器里，不会上传到任何地方。</p>
+      <div class="fgrid">
+        <div class="f full"><label>Base URL</label><input id="sUrl" placeholder="https://api.openai.com/v1"></div>
+        <div class="f full"><label>API Key</label><input id="sKey" type="password" placeholder="sk-..."></div>
+        <div class="f"><label>视觉模型 <span class="hint">识图用</span></label><input id="sModelV" placeholder="gpt-4o-mini"></div>
+        <div class="f"><label>文本模型 <span class="hint">翻译用</span></label><input id="sModelT" placeholder="gpt-4o-mini"></div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn sm" id="btnTest">测试连接</button>
+        <span class="muted" id="testMsg" style="align-self:center"></span>
+      </div>
+    </div>
+
+    <div class="card pad sec">
+      <div class="sec-h" style="margin-bottom:12px"><h2>偏好</h2></div>
+      <div class="fgrid">
+        <div class="f"><label>货币</label><select id="sCur"><option value="CAD">CAD  加元 $</option><option value="USD">USD  美元 $</option><option value="CNY">CNY  人民币 ¥</option></select></div>
+        <div class="f"><label>默认自提地点</label><input id="sLoc" placeholder="Waterloo, ON"></div>
+        <div class="f"><label>挂多少天提醒降价</label><input id="sStale" type="number" inputmode="numeric" min="1" placeholder="14"></div>
+        <div class="f"><label>联系方式 <span class="hint">附在文案末尾</span></label><input id="sContact" placeholder="留空则不附加"></div>
+      </div>
+    </div>
+
+    <div class="card pad sec">
+      <div class="sec-h" style="margin-bottom:12px"><h2>桥接服务 <span class="hint">真·一键发布用</span></h2></div>
+      <p class="muted" style="margin:0 0 12px">先在本机运行 <b>start-bridge.bat</b>（在 automation/bridge 文件夹里）。下面填它运行的地址。FB/Karrot/小红书 第一次发之前，先点「登录」按钮在弹出的 Chrome 里手动登一次，会话会保存。</p>
+      <div class="f full" style="margin-bottom:12px"><label>桥接服务地址</label><input id="sBridge" placeholder="http://localhost:8891"></div>
+      <div class="row" style="margin-bottom:10px">
+        <button class="btn sm" id="btnBridgeCheck">检查桥接状态</button>
+        <span class="muted" id="bridgeCheckMsg" style="align-self:center"></span>
+      </div>
+      <div class="row">
+        <button class="btn sm" data-login="fb">登录 Facebook</button>
+        <button class="btn sm" data-login="karrot">登录 Karrot</button>
+        <button class="btn sm" data-login="xhs">登录 小红书</button>
+        <button class="btn sm" id="btnLoginStatus">检查登录状态</button>
+      </div>
+      <p class="muted" id="loginStatusMsg" style="margin:10px 0 0"></p>
+    </div>
+
+    <div class="card pad sec">
+      <div class="sec-h" style="margin-bottom:12px"><h2>数据</h2></div>
+      <div class="row">
+        <button class="btn sm" id="btnExport2">导出 JSON 备份（含图）</button>
+        <button class="btn sm" id="btnExportLite">仅导出文字</button>
+        <button class="btn sm" id="btnImport2">导入恢复</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn sm dgr" id="btnClearDemo">清空示例数据</button>
+        <button class="btn sm dgr" id="btnClearAll">清空全部数据</button>
+      </div>
+      <p class="muted" style="margin:12px 0 0" id="storeInfo"></p>
+    </div>
+
+    <div class="card pad sec">
+      <div class="sec-h" style="margin-bottom:12px"><h2>其他</h2></div>
+      <p class="muted" style="margin:0 0 12px">忘了当初怎么设置的？可以把第一次打开时那个引导流程再走一遍。</p>
+      <button class="btn sm" id="btnRerunSetup">重新运行首次设置向导</button>
+    </div>
+  </div>
+  <div class="modal-f"><button class="btn pri" id="btnSaveSet">保存设置</button></div>
+</div></div>
+
+<!-- ============ 首次启动向导 ============ -->
+<div class="mask" id="mWizard"><div class="wiz">
+  <div class="wiz-top">
+    <div class="wiz-dots"><i class="on"></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="wiz-b">
+
+    <!-- Step 1 · 欢迎 -->
+    <div class="wstep on" data-step="1">
+      <div class="wiz-hero">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#057a55" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      </div>
+      <h2>欢迎使用二手转卖工作台</h2>
+      <p class="wsub">一件东西录一次，四个平台的文案自动写好。<br>下面 3 步大概花你 <b>1 分钟</b>，之后就再也不用填了。</p>
+      <ul class="wiz-list">
+        <li><span class="wi g"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <div><b>不用注册，不用账号</b><span>没有服务器，也没人收集你的信息</span></div></li>
+        <li><span class="wi g"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <div><b>数据只存在你这台设备上</b><span>关掉网页也还在。换设备要用「导出备份」搬过去</span></div></li>
+        <li><span class="wi g"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <div><b>完全免费，代码开源</b><span>你可以自己看它到底做了什么</span></div></li>
+      </ul>
+      <div class="wnote">接下来问你三件事：<b>东西在哪自提</b>、<b>用什么货币</b>、<b>要不要让 AI 帮你写文案</b>。<br>都能之后在设置里随时改。</div>
+    </div>
+
+    <!-- Step 2 · 基本信息 -->
+    <div class="wstep" data-step="2">
+      <h2>你在哪，卖什么价</h2>
+      <p class="wsub">这两项会自动填进每一条文案里，省得你每次手打。</p>
+      <div class="fgrid">
+        <div class="f full">
+          <label>自提地点<span class="wreq">*</span> <span class="hint">买家来哪儿取货</span></label>
+          <input id="wLoc" placeholder="例如：Waterloo, ON" autocomplete="off">
+        </div>
+        <div class="f">
+          <label>货币<span class="wreq">*</span></label>
+          <select id="wCur">
+            <option value="CAD">CAD 加元 $</option>
+            <option value="USD">USD 美元 $</option>
+            <option value="CNY">CNY 人民币 ¥</option>
+          </select>
+        </div>
+        <div class="f">
+          <label>挂多久提醒降价</label>
+          <input id="wStale" type="number" inputmode="numeric" min="1" value="14">
+        </div>
+        <div class="f full">
+          <label>联系方式 <span class="hint">选填，会附在文案末尾</span></label>
+          <input id="wContact" placeholder="微信号 / 邮箱 / 电话，不想留就空着">
+        </div>
+      </div>
+      <div class="wnote">💡 只有<b>自提地点</b>是必填的。填个大概区域就行，别写详细门牌号 —— 文案是要发到公开平台的。</div>
+    </div>
+
+    <!-- Step 3 · AI -->
+    <div class="wstep" data-step="3">
+      <h2>要不要让 AI 帮你写？</h2>
+      <p class="wsub">填了 Key，拍张照就能自动认出是什么东西、值多少钱、并写好中英文文案。<br><b>不填也完全能用</b> —— 只是所有内容要自己打字。</p>
+      <div class="fgrid">
+        <div class="f full">
+          <label>服务地址 <span class="hint">默认 OpenAI，也能填别家</span></label>
+          <input id="wUrl" placeholder="https://api.openai.com/v1" autocomplete="off">
+        </div>
+        <div class="f full">
+          <label>API Key</label>
+          <input id="wKey" type="password" placeholder="sk-... 粘贴进来就行" autocomplete="off">
+        </div>
+        <div class="f"><label>识图模型</label><input id="wModelV" placeholder="gpt-4o-mini" autocomplete="off"></div>
+        <div class="f"><label>翻译模型</label><input id="wModelT" placeholder="gpt-4o-mini" autocomplete="off"></div>
+      </div>
+      <div class="row" style="margin-top:13px">
+        <button class="btn sm" id="wTest">测试一下能不能用</button>
+        <span class="muted" id="wTestMsg" style="align-self:center"></span>
+      </div>
+      <div class="wnote">
+        <b>去哪弄 Key？</b> OpenAI、DeepSeek、通义千问、Kimi 都行，注册后在控制台生成一个粘过来。<br>
+        国内用户推荐 <b>DeepSeek</b>（便宜）；也支持本机 Ollama / LM Studio，完全离线。<br>
+        <b>Key 只存在你自己浏览器里</b>，不会发给我们 —— 我们也没有服务器可以收。
+      </div>
+    </div>
+
+    <!-- Step 4 · 完成 -->
+    <div class="wstep" data-step="4">
+      <div class="wiz-hero">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#057a55" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <h2>好了，可以开始了</h2>
+      <p class="wsub">设置已经存到这台设备上，下次打开直接进主页，不会再问你一遍。</p>
+      <ul class="wiz-list">
+        <li><span class="wi b">1</span><div><b>拍照录入</b><span>照片拖进去，点「AI 识别」或自己填</span></div></li>
+        <li><span class="wi b">2</span><div><b>你亲自过一眼</b><span>重点看价格 —— AI 有时候会估歪</span></div></li>
+        <li><span class="wi b">3</span><div><b>复制文案去发布</b><span>四个平台各一份，风格都不一样</span></div></li>
+      </ul>
+      <div class="wnote amber">
+        <b>⚠️ 一件事请务必记住：</b>数据存在浏览器里，<b>清理浏览器缓存 = 数据全没</b>。<br>
+        隔段时间点一下顶部「导出备份」，存到网盘或 U 盘。真丢了才有得救。
+      </div>
+      <label class="ab-c" style="margin-top:14px;display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer">
+        <input type="checkbox" id="wKeepDemo" checked>
+        <span>先留着 4 条示例数据，让我看看长什么样（随时能在设置里清掉）</span>
+      </label>
+    </div>
+
+  </div>
+  <div class="wiz-f">
+    <button class="btn gh hide" id="wBack">上一步</button>
+    <button class="btn pri" id="wNext">开始设置</button>
+  </div>
+</div></div>
+
+<input type="file" id="importIn" accept="application/json,.json" class="hide">
+<div id="toast"><div class="t" id="toastT"></div></div>
+
+<script>
+'use strict';
+/* ================= constants ================= */
+const K_ITEMS='wb_resell_items', K_SET='wb_resell_settings', K_META='wb_resell_meta';
+const PLATFORMS=[
+  {k:'fb',    n:'Facebook',   full:'Facebook Marketplace', cls:'fb',  ab:'f',  lang:'en', url:'https://www.facebook.com/marketplace/create/item'},
+  {k:'kijiji',n:'Kijiji',     full:'Kijiji',               cls:'kj',  ab:'K',  lang:'en', url:'https://www.kijiji.ca/p-post-ad.html'},
+  {k:'xhs',   n:'小红书',      full:'小红书',                cls:'xhs', ab:'红', lang:'zh', url:'https://creator.xiaohongshu.com/publish/publish?source=official'},
+  {k:'karrot',n:'Karrot',     full:'Karrot 胡萝卜',         cls:'kr',  ab:'🥕', lang:'en', url:'https://ca.karrotmarket.com/'}
+];
+const COND_EN={'全新未拆':'Brand new, unopened','几乎全新':'Like new','9成新':'Excellent condition','8成新':'Good condition','7成新':'Gently used, fully functional','有明显使用痕迹':'Used — cosmetic wear, works fine'};
+const CAT_EN={'家具':'Furniture','电子产品':'Electronics','家电':'Appliances','厨房用品':'Kitchen','服饰鞋包':'Clothing & Accessories','图书教材':'Books','运动户外':'Sports & Outdoors','母婴':'Baby & Kids','其他':'Other'};
+const CUR_SYM={CAD:'$',USD:'$',CNY:'¥'};
+const DEF_SET={url:'https://api.openai.com/v1',key:'',modelV:'gpt-4o-mini',modelT:'gpt-4o-mini',cur:'CAD',loc:'Waterloo, ON',stale:14,contact:'',bridge:'http://localhost:8891'};
+
+/* ================= state ================= */
+let items=[], settings={...DEF_SET}, meta={seeded:false,lastBackupCount:0,onboarded:false};
+let draftPhotos=[];   // {id, thumb, full}
+let curView='capture', detailId=null;
+
+/* ================= utils ================= */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const uid=p=>p+'_'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today=()=>new Date().toISOString().slice(0,10);
+const daysBetween=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
+const sym=()=>CUR_SYM[settings.cur]||'$';
+function toast(msg,err){const t=$('#toastT');t.textContent=msg;t.className='t'+(err?' err':'');$('#toast').classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>$('#toast').classList.remove('on'),2600);}
+
+/* ================= IndexedDB (full-size photos) ================= */
+let _db=null;
+function db(){
+  if(_db) return Promise.resolve(_db);
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open('wb_resell_db',1);
+    r.onupgradeneeded=e=>{const d=e.target.result; if(!d.objectStoreNames.contains('photos')) d.createObjectStore('photos',{keyPath:'id'});};
+    r.onsuccess=e=>{_db=e.target.result;res(_db);};
+    r.onerror=()=>rej(r.error);
+  });
+}
+async function dbPut(id,dataUrl){try{const d=await db();return new Promise(r=>{const tx=d.transaction('photos','readwrite');tx.objectStore('photos').put({id,dataUrl});tx.oncomplete=()=>r(1);tx.onerror=()=>r(0);});}catch(e){return 0}}
+async function dbGet(id){try{const d=await db();return new Promise(r=>{const tx=d.transaction('photos','readonly');const q=tx.objectStore('photos').get(id);q.onsuccess=()=>r(q.result?q.result.dataUrl:null);q.onerror=()=>r(null);});}catch(e){return null}}
+async function dbDel(id){try{const d=await db();return new Promise(r=>{const tx=d.transaction('photos','readwrite');tx.objectStore('photos').delete(id);tx.oncomplete=()=>r(1);tx.onerror=()=>r(0);});}catch(e){return 0}}
+async function dbAll(){try{const d=await db();return new Promise(r=>{const tx=d.transaction('photos','readonly');const q=tx.objectStore('photos').getAll();q.onsuccess=()=>r(q.result||[]);q.onerror=()=>r([]);});}catch(e){return []}}
+
+/* ================= storage ================= */
+function load(){
+  try{items=JSON.parse(localStorage.getItem(K_ITEMS)||'[]')}catch(e){items=[]}
+  try{settings={...DEF_SET,...JSON.parse(localStorage.getItem(K_SET)||'{}')}}catch(e){settings={...DEF_SET}}
+  try{meta={...meta,...JSON.parse(localStorage.getItem(K_META)||'{}')}}catch(e){}
+}
+function save(){
+  try{localStorage.setItem(K_ITEMS,JSON.stringify(items));localStorage.setItem(K_META,JSON.stringify(meta));}
+  catch(e){toast('本地存储已满，请导出备份后清理旧物品',1)}
+}
+function saveSet(){localStorage.setItem(K_SET,JSON.stringify(settings))}
+
+/* ================= image ================= */
+function compress(file,maxW,q){
+  return new Promise(res=>{
+    const fr=new FileReader();
+    fr.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        const sc=Math.min(1,maxW/img.width);
+        const c=document.createElement('canvas');
+        c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc);
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+        res(c.toDataURL('image/jpeg',q));
+      };
+      img.onerror=()=>res(null);
+      img.src=fr.result;
+    };
+    fr.onerror=()=>res(null);
+    fr.readAsDataURL(file);
+  });
+}
+function placeholder(txt,color){
+  const s=`<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="200" height="200" fill="${color}"/><text x="100" y="112" font-family="sans-serif" font-size="64" font-weight="bold" fill="#fff" text-anchor="middle">${txt}</text></svg>`;
+  return 'data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(s)));
+}
+
+/* ================= item factory ================= */
+function blankPlatforms(){const o={};PLATFORMS.forEach(p=>o[p.k]={state:'pending',at:'',note:''});return o;}
+function newItem(d){
+  return {id:uid('itm'),createdAt:today(),status:'review',nameZh:'',nameEn:'',brand:'',cat:'其他',cond:'9成新',
+    price:0,descZh:'',descEn:'',loc:settings.loc,thumb:'',photos:[],platforms:blankPlatforms(),postedAt:'',soldAt:'',demo:false,...d};
+}
+
+/* ================= copy generator ================= */
+function contactLine(lang){
+  if(!settings.contact) return '';
+  return lang==='zh' ? `\n联系：${settings.contact}` : `\nContact: ${settings.contact}`;
+}
+function buildCopy(it,pk){
+  const s=sym(), price=it.price||0;
+  const nEn=it.nameEn||it.nameZh, nZh=it.nameZh||it.nameEn;
+  const dEn=it.descEn||'', dZh=it.descZh||'';
+  const condEn=COND_EN[it.cond]||it.cond, catEn=CAT_EN[it.cat]||it.cat;
+  if(pk==='fb'){
+    return {title:nEn,
+      text:`Title: ${nEn}\nPrice: ${s}${price}\nCategory: ${catEn}\nCondition: ${condEn}\n\nDescription:\n${dEn}\n\n${it.brand?'Brand: '+it.brand+'\n':''}Pickup: ${it.loc}\nCash or e-Transfer. Serious buyers only — message me and it's yours.${contactLine('en')}`};
+  }
+  if(pk==='kijiji'){
+    return {title:`${nEn} — ${condEn}`,
+      text:`Title: ${nEn} — ${condEn}\nPrice: ${s}${price}\nCategory: ${catEn}\nLocation: ${it.loc}\n\nDescription:\n${dEn}\n\n${it.brand?'Brand: '+it.brand+'\n':''}Pickup only, ${it.loc}. Cash or e-Transfer.\nFeel free to message me with any questions.${contactLine('en')}`};
+  }
+  if(pk==='xhs'){
+    const tags=['#二手转卖','#'+(it.loc.split(',')[0]||'本地')+'二手','#留学生二手','#'+it.cat,'#低价出'].join(' ');
+    return {title:`${nZh} 低价出 · ${it.cond}`,
+      text:`${nZh} 低价出｜${it.cond}\n\n${dZh}\n\n价格：${s}${price}（可小刀）\n${it.brand?'品牌：'+it.brand+'\n':''}成色：${it.cond}\n自提：${it.loc}\n\n有需要的宝子评论或私信我～${contactLine('zh')}\n\n${tags}`};
+  }
+  // karrot
+  return {title:nEn,
+    text:`${nEn}\n${s}${price}\n\n${dEn}\n\nCondition: ${condEn}\nPickup around ${it.loc}\nFirst come first served — send me a chat!${contactLine('en')}`};
+}
+
+/* ================= AI ================= */
+function hasAI(){return !!(settings.key&&settings.url)}
+async function callAI(messages,model){
+  const r=await fetch(settings.url.replace(/\/+$/,'')+'/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+settings.key},
+    body:JSON.stringify({model:model||settings.modelT,messages,temperature:0.3,max_tokens:1200})
+  });
+  if(!r.ok){const t=await r.text().catch(()=>'');throw new Error('HTTP '+r.status+' '+t.slice(0,160));}
+  const j=await r.json();
+  return (j.choices&&j.choices[0]&&j.choices[0].message.content)||'';
+}
+function parseJSON(txt){
+  let t=txt.trim().replace(/^```(json)?/i,'').replace(/```$/,'').trim();
+  const a=t.indexOf('{'),b=t.lastIndexOf('}');
+  if(a>=0&&b>a) t=t.slice(a,b+1);
+  return JSON.parse(t);
+}
+async function aiRecognize(){
+  if(!draftPhotos.length){toast('先上传至少一张照片',1);return;}
+  if(!hasAI()){toast('还没配 API Key，去设置里填一个',1);$('#mSettings').classList.add('on');return;}
+  const btn=$('#btnAI'); const old=btn.innerHTML;
+  btn.disabled=true; btn.innerHTML='识别中…请稍候';
+  try{
+    const imgs=draftPhotos.slice(0,4).map(p=>({type:'image_url',image_url:{url:p.full||p.thumb}}));
+    const prompt=`你是二手物品鉴定助手。看这些照片，判断这是什么物品，然后严格只输出一个 JSON 对象（不要任何解释、不要 markdown 代码块）：
+{"nameZh":"中文物品名（含品牌型号，尽量具体）","nameEn":"English item name","brand":"品牌，看不出就填空字符串","cat":"从这些里选一个：家具/电子产品/家电/厨房用品/服饰鞋包/图书教材/运动户外/母婴/其他","cond":"从这些里选一个：全新未拆/几乎全新/9成新/8成新/7成新/有明显使用痕迹","price":二手建议售价数字（${settings.cur}，只要数字不要符号）,"descZh":"2-4句中文卖点描述，口语化，提到成色和使用情况","descEn":"2-4 sentence English description, casual tone, mention condition"}`;
+    const out=await callAI([{role:'user',content:[{type:'text',text:prompt},...imgs]}],settings.modelV);
+    const d=parseJSON(out);
+    $('#fNameZh').value=d.nameZh||''; $('#fNameEn').value=d.nameEn||'';
+    $('#fBrand').value=d.brand||'';
+    if(d.cat) $('#fCat').value=d.cat; if(d.cond) $('#fCond').value=d.cond;
+    $('#fPrice').value=d.price||''; $('#fDescZh').value=d.descZh||''; $('#fDescEn').value=d.descEn||'';
+    if(!$('#fLoc').value) $('#fLoc').value=settings.loc;
+    toast('识别完成，检查一下再保存');
+    $('#formCard').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){
+    toast('识别失败：'+e.message,1);
+    console.error(e);
+  }finally{btn.disabled=false;btn.innerHTML=old;}
+}
+async function aiTranslate(){
+  const zhN=$('#fNameZh').value.trim(), zhD=$('#fDescZh').value.trim();
+  if(!zhN&&!zhD){toast('先填中文内容',1);return;}
+  if(!hasAI()){toast('没填 API Key，翻译用不了；英文那栏可以自己手打',1);$('#mSettings').classList.add('on');return;}
+  const b=$('#btnTrans'); const old=b.innerHTML; b.disabled=true; b.textContent='翻译中…';
+  try{
+    const out=await callAI([{role:'user',content:`把下面二手商品信息翻译成地道的北美二手交易平台英文。严格只输出 JSON，不要解释：
+{"nameEn":"...","descEn":"..."}
+物品名：${zhN}
+描述：${zhD}`}],settings.modelT);
+    const d=parseJSON(out);
+    if(d.nameEn)$('#fNameEn').value=d.nameEn;
+    if(d.descEn)$('#fDescEn').value=d.descEn;
+    toast('翻译完成');
+  }catch(e){toast('翻译失败：'+e.message,1)}
+  finally{b.disabled=false;b.innerHTML=old;}
+}
+
+/* ================= today panel ================= */
+function computeToday(){
+  const r={review:[],topost:0,topostItems:[],failed:[],stale:[]};
+  const staleDays=+settings.stale||14;
+  items.forEach(it=>{
+    if(it.status==='review') r.review.push(it);
+    if(it.status==='approved'){
+      const pend=PLATFORMS.filter(p=>it.platforms[p.k].state==='pending').length;
+      if(pend){r.topost+=pend;r.topostItems.push(it);}
+    }
+    const f=PLATFORMS.filter(p=>it.platforms[p.k].state==='failed');
+    if(f.length) r.failed.push({it,n:f.length});
+    if(it.postedAt&&!it.soldAt&&daysBetween(it.postedAt,today())>=staleDays) r.stale.push(it);
+  });
+  return r;
+}
+function renderToday(){
+  const t=computeToday(), el=$('#today');
+  const rows=[];
+  if(t.failed.length){
+    const n=t.failed.reduce((s,x)=>s+x.n,0);
+    rows.push(`<button class="titem red" data-go="track"><span class="tdot"></span><span class="tx"><b>${n} 个平台发布失败</b>
+      <span class="tsub">${t.failed.slice(0,2).map(x=>esc(x.it.nameZh||x.it.nameEn)).join('、')}${t.failed.length>2?' 等':''} — 去重发</span></span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>`);
+  }
+  if(t.review.length){
+    rows.push(`<button class="titem amb" data-go="review"><span class="tdot"></span><span class="tx"><b>${t.review.length} 件等你审核</b>
+      <span class="tsub">${t.review.slice(0,2).map(x=>esc(x.nameZh||x.nameEn)).join('、')}${t.review.length>2?' 等':''} — AI 填好了，确认下就能上架</span></span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>`);
+  }
+  if(t.topost){
+    rows.push(`<button class="titem" data-go="track"><span class="tdot"></span><span class="tx"><b>${t.topost} 个平台待发布</b>
+      <span class="tsub">涉及 ${t.topostItems.length} 件物品 — 文案已生成，点一下复制就能发</span></span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>`);
+  }
+  if(t.stale.length){
+    const maxD=Math.max(...t.stale.map(x=>daysBetween(x.postedAt,today())));
+    rows.push(`<button class="titem amb" data-go="track"><span class="tdot"></span><span class="tx"><b>${t.stale.length} 件已经挂了 ${maxD} 天还没卖掉</b>
+      <span class="tsub">${t.stale.slice(0,2).map(x=>esc(x.nameZh||x.nameEn)).join('、')} — 考虑降价或重发置顶</span></span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>`);
+  }
+  const hot=t.failed.length>0;
+  el.innerHTML=`<div class="today-card${hot?' hot':''}">
+    <div class="today-h">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="${hot?'#e02424':'#0e9f6e'}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><polyline points="12 6.8 12 12 15.5 13.8"/></svg>
+      <h2>今天要处理</h2><div class="sp" style="flex:1"></div>
+      <span class="muted">${today()}</span>
+    </div>
+    ${rows.length?`<div class="tlist">${rows.join('')}</div>`
+      :`<div class="allclear"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>全部处理完了，去录入新物品吧</div>`}
+  </div>`;
+  el.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+}
+
+/* ================= badges & stats ================= */
+function renderBadges(){
+  const t=computeToday();
+  const nR=t.review.length, nT=t.topost+t.failed.reduce((s,x)=>s+x.n,0);
+  [['#bdgReview',nR],['#bdgReview2',nR],['#bdgTrack',nT],['#bdgTrack2',nT]].forEach(([sel,n])=>{
+    const e=$(sel); if(!e)return; e.textContent=n; e.classList.toggle('hide',!n);
+  });
+  $('#hdrCount').textContent=items.length?`共 ${items.length} 件`:'';
+}
+
+/* ================= renderers ================= */
+function thumbHTML(it){
+  return it.thumb
+    ? `<img src="${it.thumb}" alt="">`
+    : `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg>`;
+}
+function itemCard(it,mode){
+  const s=sym();
+  const posted=PLATFORMS.filter(p=>it.platforms[p.k].state==='posted').length;
+  const failed=PLATFORMS.filter(p=>it.platforms[p.k].state==='failed').length;
+  const sold=PLATFORMS.filter(p=>it.platforms[p.k].state==='sold').length;
+  let pills=`<span class="pill">${esc(it.cond)}</span>`;
+  if(it.demo) pills+=`<span class="pill b">示例</span>`;
+  if(sold) pills+=`<span class="pill b">已售出</span>`;
+  else if(failed) pills+=`<span class="pill r">${failed} 个失败</span>`;
+  else if(mode==='track'&&posted===PLATFORMS.length) pills+=`<span class="pill g">全平台已发</span>`;
+  const stale=it.postedAt&&!it.soldAt&&daysBetween(it.postedAt,today())>=(+settings.stale||14);
+  if(stale) pills+=`<span class="pill a">挂了 ${daysBetween(it.postedAt,today())} 天</span>`;
+
+  let acts='';
+  if(mode==='review'){
+    acts=`<button class="btn xs pri" data-act="approve" data-id="${it.id}">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>审核通过</button>
+      <button class="btn xs" data-act="open" data-id="${it.id}">查看 / 编辑</button>
+      <button class="btn xs dgr" data-act="del" data-id="${it.id}">删除</button>`;
+  }else if(mode==='approved'){
+    acts=`<button class="btn xs pri" data-act="open" data-id="${it.id}">去上架</button>
+      <button class="btn xs" data-act="back" data-id="${it.id}">打回修改</button>`;
+  }else{
+    acts=`<button class="btn xs pri" data-act="open" data-id="${it.id}">发布 / 改状态</button>`;
+    if(!it.soldAt) acts+=`<button class="btn xs" data-act="sold" data-id="${it.id}">标记已售出</button>`;
+    acts+=`<button class="btn xs dgr" data-act="del" data-id="${it.id}">删除</button>`;
+  }
+
+  const pgrid = mode==='track' ? `<div class="pgrid">${PLATFORMS.map(p=>{
+    const st=it.platforms[p.k];
+    const label={pending:'待发布',posted:'已发布',failed:'失败',sold:'已售出',skip:'跳过'}[st.state];
+    return `<div class="pcell" data-s="${st.state}"><div class="pn"><span class="plogo ${p.cls}">${p.ab}</span>${esc(p.n)}</div><div class="ps">${label}</div></div>`;
+  }).join('')}</div>` : '';
+
+  return `<div class="icard${failed?' warn':''}">
+    <div class="ithumb">${thumbHTML(it)}</div>
+    <div class="ibody">
+      <div class="ititle">${esc(it.nameZh||it.nameEn||'未命名物品')}<span class="iprice">${s}${it.price||0}</span></div>
+      <div class="imeta">${esc(it.cat)} · ${esc(it.brand||'无品牌')} · 录入 ${it.createdAt}${it.photos.length?' · '+it.photos.length+' 张图':''}</div>
+      <div class="row" style="margin-bottom:8px">${pills}</div>
+      <div class="iacts">${acts}</div>
+    </div>
+  </div>${pgrid}`;
+}
+function wireCards(root){
+  root.querySelectorAll('[data-act]').forEach(b=>{
+    b.onclick=()=>{
+      const it=items.find(x=>x.id===b.dataset.id); if(!it)return;
+      const a=b.dataset.act;
+      if(a==='open'){openDetail(it.id);}
+      else if(a==='approve'){it.status='approved';save();toast('已通过，去「上架追踪」发布');render();}
+      else if(a==='back'){it.status='review';save();render();}
+      else if(a==='sold'){it.soldAt=today();PLATFORMS.forEach(p=>{if(it.platforms[p.k].state==='posted')it.platforms[p.k].state='sold';});save();toast('恭喜卖出！');render();}
+      else if(a==='del'){
+        if(confirm('确定删除「'+(it.nameZh||it.nameEn)+'」？此操作不可撤销。')){
+          it.photos.forEach(dbDel); items=items.filter(x=>x.id!==it.id); save(); render(); toast('已删除');
+        }
+      }
+    };
+  });
+}
+function renderLists(){
+  const rev=items.filter(i=>i.status==='review');
+  const app=items.filter(i=>i.status==='approved'&&PLATFORMS.every(p=>i.platforms[p.k].state==='pending'));
+  const trk=items.filter(i=>i.status==='approved'&&PLATFORMS.some(p=>i.platforms[p.k].state!=='pending'))
+             .concat(items.filter(i=>i.status==='approved'&&PLATFORMS.every(p=>i.platforms[p.k].state==='pending')));
+  $('#cntReview').textContent=rev.length; $('#cntApproved').textContent=app.length;
+
+  const emp=(icon,txt)=>`<div class="empty card">${icon}<p>${txt}</p></div>`;
+  const iBox=`<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5" style="margin:0 auto"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>`;
+
+  $('#listReview').innerHTML=rev.length?rev.map(i=>itemCard(i,'review')).join(''):emp(iBox,'没有待审核的物品，去「录入」加一件');
+  $('#listApproved').innerHTML=app.length?app.map(i=>itemCard(i,'approved')).join(''):emp(iBox,'审核通过的物品会出现在这里');
+  $('#listTrack').innerHTML=trk.length?trk.map(i=>itemCard(i,'track')).join(''):emp(iBox,'还没有物品进入上架流程');
+  [$('#listReview'),$('#listApproved'),$('#listTrack')].forEach(wireCards);
+
+  // stats
+  let cP=0,cD=0,cF=0,cS=0;
+  items.forEach(it=>PLATFORMS.forEach(p=>{const s=it.platforms[p.k].state;
+    if(it.status!=='approved')return;
+    if(s==='pending')cP++;else if(s==='posted')cD++;else if(s==='failed')cF++;else if(s==='sold')cS++;}));
+  $('#statBox').innerHTML=`
+    <div class="sbox"><div class="n">${cP}</div><div class="l">待发布</div></div>
+    <div class="sbox g"><div class="n">${cD}</div><div class="l">已发布</div></div>
+    <div class="sbox r"><div class="n">${cF}</div><div class="l">发布失败</div></div>
+    <div class="sbox b"><div class="n">${cS}</div><div class="l">已成交</div></div>`;
+}
+function render(){renderToday();renderBadges();renderLists();renderStore();}
+function renderStore(){
+  let bytes=0; try{bytes=new Blob([localStorage.getItem(K_ITEMS)||'']).size}catch(e){}
+  const el=$('#storeInfo'); if(el) el.textContent=`当前 ${items.length} 件物品，文字数据约 ${(bytes/1024).toFixed(0)} KB（上限约 5 MB）。照片存在 IndexedDB，容量充裕。`;
+}
+
+/* ================= detail modal ================= */
+async function openDetail(id){
+  const it=items.find(x=>x.id===id); if(!it)return;
+  detailId=id;
+  $('#dTitle').textContent=it.nameZh||it.nameEn||'物品详情';
+  const s=sym();
+  const photoHTML=it.photos.length?`<div class="thumbs" id="dThumbs">${it.photos.map((p,i)=>`<div class="th"><img data-ph="${p}" alt=""><span class="no">${i+1}</span></div>`).join('')}</div>`:'<p class="muted">这件物品没有照片</p>';
+
+  const editable=`<div class="card pad" style="margin-bottom:12px">
+    <div class="sec-h" style="margin-bottom:12px"><h2>基本信息</h2><div class="sp" style="flex:1"></div>
+      <button class="btn xs" id="dTrans">中译英</button></div>
+    <div class="fgrid">
+      <div class="f"><label>名称（中）</label><input id="dNameZh" value="${esc(it.nameZh)}"></div>
+      <div class="f"><label>名称（英）</label><input id="dNameEn" value="${esc(it.nameEn)}"></div>
+      <div class="f"><label>品牌</label><input id="dBrand" value="${esc(it.brand)}"></div>
+      <div class="f"><label>售价 ${s}</label><input id="dPrice" type="number" inputmode="decimal" value="${it.price||0}"></div>
+      <div class="f"><label>成色</label><select id="dCond">${Object.keys(COND_EN).map(c=>`<option${c===it.cond?' selected':''}>${c}</option>`).join('')}</select></div>
+      <div class="f"><label>分类</label><select id="dCat">${Object.keys(CAT_EN).map(c=>`<option${c===it.cat?' selected':''}>${c}</option>`).join('')}</select></div>
+      <div class="f full"><label>中文描述</label><textarea id="dDescZh">${esc(it.descZh)}</textarea></div>
+      <div class="f full"><label>英文描述</label><textarea id="dDescEn">${esc(it.descEn)}</textarea></div>
+      <div class="f full"><label>自提地点</label><input id="dLoc" value="${esc(it.loc)}"></div>
+    </div>
+  </div>`;
+
+  const photos=`<div class="card pad" style="margin-bottom:12px">
+    <div class="sec-h" style="margin-bottom:10px"><h2>照片</h2><div class="sp" style="flex:1"></div>
+      ${it.photos.length?`<button class="btn xs" id="dDl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载全部原图</button>`:''}</div>
+    ${photoHTML}
+    <p class="muted" style="margin:10px 0 0">下载后拖进平台的上传框就行。</p>
+  </div>`;
+
+  const autobar=`<div class="autobar" id="autoBar">
+    <div class="ab-h">
+      <span class="ab-t">真·一键发布</span>
+      <span class="ab-s" id="abState">检查桥接中…</span>
+    </div>
+    <div class="ab-pk">
+      ${PLATFORMS.map(p=>`<label class="ab-c"><input type="checkbox" data-pub="${p.k}" ${it.platforms[p.k].state==='posted'||it.platforms[p.k].state==='sold'?'':'checked'}><span class="plogo ${p.cls}">${p.ab}</span>${esc(p.n)}</label>`).join('')}
+    </div>
+    <div class="row">
+      <button class="btn sm pri" id="btnPubAll" disabled>发布选中平台</button>
+      <span class="muted" id="abMsg" style="align-self:center"></span>
+    </div>
+    <div id="abLog" class="ab-log hide"></div>
+  </div>`;
+
+  const posting=it.status==='approved'?`<div class="card pad">
+    <div class="sec-h" style="margin-bottom:12px"><h2>四平台发布</h2><div class="sp" style="flex:1"></div>
+      <span class="muted">桥接开着就全自动，没开就复制跳转</span></div>
+    ${autobar}
+    ${PLATFORMS.map(p=>{
+      const st=it.platforms[p.k], c=buildCopy(it,p.k);
+      const label={pending:'待发布',posted:'已发布',failed:'失败',sold:'已售出',skip:'跳过'}[st.state];
+      const pcls={pending:'',posted:'g',failed:'r',sold:'b',skip:''}[st.state];
+      return `<div class="cblock">
+        <div class="cb-h"><span class="nm"><span class="plogo ${p.cls}">${p.ab}</span>${esc(p.full)}</span>
+          <span class="pill ${pcls}">${label}</span></div>
+        <div class="cb-b">${esc(c.text)}</div>
+        <div class="cb-f">
+          <button class="btn xs pri" data-cp="${p.k}">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            复制并打开${esc(p.n)}
+          </button>
+          <button class="btn xs" data-mk="${p.k}" data-st="posted">标为已发布</button>
+          <button class="btn xs dgr" data-mk="${p.k}" data-st="failed">标为失败</button>
+          ${st.state!=='pending'?`<button class="btn xs" data-mk="${p.k}" data-st="pending">重置</button>`:''}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`:`<div class="card pad"><p class="muted" style="margin:0">这件还在审核中。审核通过后，这里会出现四个平台的文案和一键发布按钮。</p></div>`;
+
+  $('#dBody').innerHTML=editable+photos+posting;
+  $('#dFoot').innerHTML=it.status==='review'
+    ? `<button class="btn" id="dSave">保存修改</button><button class="btn pri" id="dApprove">审核通过</button>`
+    : `<button class="btn" id="dSave">保存修改</button><button class="btn" id="dBack">打回修改</button>`;
+
+  $('#mDetail').classList.add('on');
+
+  // load photos async
+  it.photos.forEach(async pid=>{
+    const url=await dbGet(pid);
+    const img=$('#dBody').querySelector(`img[data-ph="${pid}"]`);
+    if(img) img.src=url||it.thumb||'';
+  });
+
+  const collect=()=>{
+    it.nameZh=$('#dNameZh').value.trim(); it.nameEn=$('#dNameEn').value.trim();
+    it.brand=$('#dBrand').value.trim(); it.price=+$('#dPrice').value||0;
+    it.cond=$('#dCond').value; it.cat=$('#dCat').value;
+    it.descZh=$('#dDescZh').value.trim(); it.descEn=$('#dDescEn').value.trim();
+    it.loc=$('#dLoc').value.trim();
+  };
+  $('#dSave').onclick=()=>{collect();save();toast('已保存');render();openDetail(id);};
+  if($('#dApprove')) $('#dApprove').onclick=()=>{collect();it.status='approved';save();toast('已通过，可以发布了');$('#mDetail').classList.remove('on');go('track');render();};
+  if($('#dBack')) $('#dBack').onclick=()=>{collect();it.status='review';save();$('#mDetail').classList.remove('on');go('review');render();};
+
+  $('#dTrans').onclick=async()=>{
+    if(!hasAI()){toast('没配 API Key，去设置里填',1);return;}
+    const b=$('#dTrans');b.disabled=true;b.textContent='翻译中…';
+    try{
+      const out=await callAI([{role:'user',content:`把下面二手商品信息翻译成地道的北美二手交易平台英文。严格只输出 JSON：\n{"nameEn":"...","descEn":"..."}\n物品名：${$('#dNameZh').value}\n描述：${$('#dDescZh').value}`}],settings.modelT);
+      const d=parseJSON(out);
+      if(d.nameEn)$('#dNameEn').value=d.nameEn; if(d.descEn)$('#dDescEn').value=d.descEn;
+      toast('翻译完成，记得保存');
+    }catch(e){toast('翻译失败：'+e.message,1)}
+    finally{b.disabled=false;b.textContent='中译英'}
+  };
+
+  if($('#dDl')) $('#dDl').onclick=async()=>{
+    toast('开始下载 '+it.photos.length+' 张图…');
+    for(let i=0;i<it.photos.length;i++){
+      const url=await dbGet(it.photos[i]); if(!url)continue;
+      const a=document.createElement('a');
+      a.href=url; a.download=`${(it.nameEn||it.nameZh||'item').replace(/[^\w\u4e00-\u9fa5-]/g,'_')}_${i+1}.jpg`;
+      document.body.appendChild(a); a.click(); a.remove();
+      await new Promise(r=>setTimeout(r,320));
+    }
+  };
+
+  if($('#btnPubAll')){
+    syncAutoBar();
+    checkBridge(true).then(syncAutoBar);
+    $('#btnPubAll').onclick=()=>publishViaBridge(it,collect);
+  }
+
+  $('#dBody').querySelectorAll('[data-cp]').forEach(b=>b.onclick=async()=>{
+    collect();
+    const p=PLATFORMS.find(x=>x.k===b.dataset.cp);
+    const c=buildCopy(it,p.k);
+    await copyText(c.text);
+    window.open(p.url,'_blank','noopener');
+    toast('文案已复制，粘贴到 '+p.n+' 就行');
+  });
+  $('#dBody').querySelectorAll('[data-mk]').forEach(b=>b.onclick=()=>{
+    collect();
+    const k=b.dataset.mk, st=b.dataset.st;
+    it.platforms[k].state=st; it.platforms[k].at=today();
+    if(st==='posted'&&!it.postedAt) it.postedAt=today();
+    save(); toast(st==='posted'?'已记为发布成功':st==='failed'?'已记为失败，稍后可重发':'已重置');
+    render(); openDetail(id);
+  });
+}
+/* ================= bridge client ================= */
+let bridgeOnline=false;
+const bridgeBase=()=>(settings.bridge||DEF_SET.bridge).replace(/\/+$/,'');
+
+async function bridgeFetch(path,opt={},ms=15000){
+  const c=new AbortController(), t=setTimeout(()=>c.abort(),ms);
+  try{
+    const r=await fetch(bridgeBase()+path,{...opt,signal:c.signal});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(j.message||('HTTP '+r.status));
+    return j;
+  } finally { clearTimeout(t); }
+}
+
+async function checkBridge(quiet){
+  const dot=$('#bridgeDot');
+  try{
+    const j=await bridgeFetch('/health',{},4000);
+    bridgeOnline=!!j.ok;
+    if(dot){dot.className=bridgeOnline?'on':'off';}
+    if($('#btnBridge')) $('#btnBridge').title=bridgeOnline?'桥接在线 — 可以真·一键发布':'桥接离线';
+    if(!quiet) toast(bridgeOnline?'桥接在线，可以真·一键发布':'桥接返回异常',bridgeOnline?0:1);
+    return j;
+  }catch(e){
+    bridgeOnline=false;
+    if(dot) dot.className='off';
+    if($('#btnBridge')) $('#btnBridge').title='桥接离线 — 先运行 start-bridge.bat';
+    if(!quiet) toast('桥接没连上：先运行 start-bridge.bat',1);
+    return null;
+  }
+}
+
+function syncAutoBar(){
+  const s=$('#abState'), b=$('#btnPubAll');
+  if(!s||!b) return;
+  if(bridgeOnline){ s.textContent='桥接在线'; s.className='ab-s on'; b.disabled=false; }
+  else { s.textContent='桥接离线 — 用下面的复制跳转'; s.className='ab-s off'; b.disabled=true; }
+}
+
+async function publishViaBridge(it,collect){
+  const picked=[...$('#dBody').querySelectorAll('[data-pub]:checked')].map(c=>c.dataset.pub);
+  if(!picked.length){ toast('先勾选要发布的平台',1); return; }
+  collect(); save();
+
+  const btn=$('#btnPubAll'), logEl=$('#abLog'), msg=$('#abMsg');
+  btn.disabled=true; btn.textContent='发布中…';
+  logEl.classList.remove('hide');
+  logEl.innerHTML=picked.map(k=>{
+    const p=PLATFORMS.find(x=>x.k===k);
+    return `<div class="l" data-lg="${k}"><b>${esc(p.n)}</b><span>排队中…</span></div>`;
+  }).join('');
+  msg.textContent='浏览器会自动弹出，别关它。全程约 '+(picked.length*30)+' 秒起。';
+
+  // gather full-size images as data URLs
+  const images=[];
+  for(const pid of it.photos.slice(0,8)){
+    const u=await dbGet(pid); if(u) images.push(u);
+  }
+  const copy={}; picked.forEach(k=>{ copy[k]=buildCopy(it,k); });
+
+  try{
+    const j=await bridgeFetch('/publish',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        item:{nameZh:it.nameZh,nameEn:it.nameEn,brand:it.brand,price:it.price,cur:settings.cur,
+              cond:it.cond,cat:it.cat,descZh:it.descZh,descEn:it.descEn,loc:it.loc},
+        platforms:picked, copy, images
+      })
+    }, 1000*60*10);
+
+    const R=j.results||{};
+    let ok=0,fail=0;
+    picked.forEach(k=>{
+      const r=R[k]||{status:'failed',message:'桥接没返回结果'};
+      const line=logEl.querySelector(`[data-lg="${k}"] span`);
+      const good=r.status==='posted';
+      if(good){ok++}else{fail++}
+      if(line){
+        line.className=good?'ok':'er';
+        line.textContent=good?('成功'+(r.url?' — '+r.url:'')):('失败：'+(r.message||'未知原因'));
+      }
+      it.platforms[k].state=good?'posted':'failed';
+      it.platforms[k].at=today();
+      if(r.url) it.platforms[k].url=r.url;
+      it.platforms[k].note=good?'':String(r.message||'').slice(0,200);
+      if(good&&!it.postedAt) it.postedAt=today();
+    });
+    save(); render();
+    msg.textContent=`完成：成功 ${ok} 个，失败 ${fail} 个。`;
+    toast(fail?`发布完成：成功 ${ok}，失败 ${fail}，看下面原因`:`四平台发布成功 ${ok} 个 🎉`,fail?1:0);
+  }catch(e){
+    msg.textContent='桥接调用失败：'+e.message;
+    logEl.querySelectorAll('.l span').forEach(s=>{s.className='er';s.textContent='未执行'});
+    toast('桥接调用失败：'+e.message.slice(0,60),1);
+  }finally{
+    btn.disabled=false; btn.textContent='发布选中平台';
+  }
+}
+
+async function copyText(t){
+  try{ await navigator.clipboard.writeText(t); }
+  catch(e){
+    const ta=document.createElement('textarea'); ta.value=t;
+    ta.style.cssText='position:fixed;left:-9999px'; document.body.appendChild(ta);
+    ta.select(); try{document.execCommand('copy')}catch(_){} ta.remove();
+  }
+}
+
+/* ================= report ================= */
+function buildReport(){
+  const s=sym(), d=today();
+  let L=[`═══ 上架战报  ${d} ═══`,''];
+  let ok=0,fail=0,pend=0,sold=0,gmv=0;
+  const failLines=[],pendLines=[];
+  items.filter(i=>i.status==='approved').forEach(it=>{
+    const nm=it.nameZh||it.nameEn;
+    PLATFORMS.forEach(p=>{
+      const st=it.platforms[p.k];
+      if(st.state==='posted')ok++;
+      else if(st.state==='sold'){sold++;}
+      else if(st.state==='failed'){fail++;failLines.push(`  ✗ ${nm} → ${p.full}${st.at?'（'+st.at+'）':''}`);}
+      else if(st.state==='pending'){pend++;pendLines.push(`  · ${nm} → ${p.full}`);}
+    });
+    if(it.soldAt) gmv+=(+it.price||0);
+  });
+  L.push(`成功上架 ${ok} 处 ｜ 失败 ${fail} 处 ｜ 待发 ${pend} 处 ｜ 已成交 ${sold} 处`);
+  L.push(`累计成交金额：${s}${gmv}`,'');
+  if(fail){L.push('【需要你处理 · 发布失败】',...failLines,'');}
+  if(pend){L.push('【还没发的】',...pendLines.slice(0,20),pendLines.length>20?`  …还有 ${pendLines.length-20} 条`:'','');}
+  const staleDays=+settings.stale||14;
+  const stale=items.filter(i=>i.postedAt&&!i.soldAt&&daysBetween(i.postedAt,d)>=staleDays);
+  if(stale.length){
+    L.push(`【挂了 ${staleDays} 天以上 · 建议降价】`);
+    stale.forEach(it=>L.push(`  ⏳ ${it.nameZh||it.nameEn}  ${s}${it.price}  已挂 ${daysBetween(it.postedAt,d)} 天`));
+    L.push('');
+  }
+  if(!fail&&!pend) L.push('全部发完了，没有失败项。坐等买家上门。');
+  return L.join('\n');
+}
+function showReport(){
+  $('#dTitle').textContent='上架战报';
+  $('#dBody').innerHTML=`<div class="rpt" id="rptBox">${esc(buildReport())}</div>`;
+  $('#dFoot').innerHTML=`<button class="btn" id="rCopy">复制战报</button><button class="btn pri" data-close2>知道了</button>`;
+  $('#mDetail').classList.add('on');
+  $('#rCopy').onclick=async()=>{await copyText(buildReport());toast('战报已复制，可以发给自己存档')};
+  $('#dFoot').querySelector('[data-close2]').onclick=()=>$('#mDetail').classList.remove('on');
+}
+
+/* ================= backup ================= */
+async function doExport(withPhotos){
+  const payload={_app:'wb-resell-workbench',_v:1,exportedAt:new Date().toISOString(),settings:{...settings,key:''},items,photos:[]};
+  if(withPhotos){
+    const all=await dbAll();
+    const used=new Set(items.flatMap(i=>i.photos));
+    payload.photos=all.filter(p=>used.has(p.id));
+  }
+  const blob=new Blob([JSON.stringify(payload)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`二手转卖台备份_${today()}${withPhotos?'_含图':'_仅文字'}.json`;
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},600);
+  meta.lastBackupCount=items.length; save();
+  toast('备份已下载');
+}
+function doImport(file){
+  const fr=new FileReader();
+  fr.onload=async()=>{
+    try{
+      const d=JSON.parse(fr.result);
+      const inItems=Array.isArray(d.items)?d.items:(Array.isArray(d)?d:null);
+      if(!inItems) throw new Error('文件格式不对');
+      const mode=items.length? (confirm(`当前已有 ${items.length} 件物品。\n\n【确定】= 合并导入（保留现有数据，${inItems.length} 条新数据追加进来）\n【取消】= 覆盖导入（清空现有，只保留导入的 ${inItems.length} 条）`)?'merge':'replace') : 'replace';
+      if(mode==='replace') items=[];
+      const exist=new Set(items.map(i=>i.id));
+      let n=0;
+      inItems.forEach(it=>{
+        const o=newItem(it);
+        o.id = exist.has(it.id)? uid('itm') : (it.id||uid('itm'));
+        o.platforms={...blankPlatforms(),...(it.platforms||{})};
+        o.photos=Array.isArray(it.photos)?it.photos:[];
+        items.push(o); exist.add(o.id); n++;
+      });
+      if(Array.isArray(d.photos)) for(const p of d.photos) await dbPut(p.id,p.dataUrl);
+      if(d.settings) settings={...settings,...d.settings,key:settings.key};
+      save(); saveSet(); render();
+      toast(`导入成功，${n} 条数据已恢复`);
+    }catch(e){toast('导入失败：'+e.message,1)}
+  };
+  fr.readAsText(file);
+}
+
+/* ================= seed ================= */
+function seed(){
+  if(meta.seeded) return;
+  const d=new Date(); const ago=n=>new Date(d-n*864e5).toISOString().slice(0,10);
+  const mk=(o)=>{const it=newItem(o);it.demo=true;return it;};
+
+  const a=mk({nameZh:'宜家 MICKE 书桌 白色',nameEn:'IKEA MICKE Desk (White)',brand:'IKEA',cat:'家具',cond:'8成新',price:45,
+    descZh:'用了一年多，桌面无划痕，抽屉滑轨顺滑。105x50cm，很适合小房间。毕业搬家出，需自提。',
+    descEn:'Used for about a year. No scratches on the desktop, drawer slides smoothly. 105x50cm, great for a small room. Moving out, pickup only.',
+    thumb:placeholder('桌','#8b5cf6'),createdAt:ago(9),status:'approved',postedAt:ago(7)});
+  a.platforms.fb={state:'posted',at:ago(7),note:''};
+  a.platforms.kijiji={state:'failed',at:ago(7),note:'图片上传超时'};
+  a.platforms.xhs={state:'posted',at:ago(7),note:''};
+  a.platforms.karrot={state:'pending',at:'',note:''};
+
+  const b=mk({nameZh:'罗技 MX Master 3 无线鼠标',nameEn:'Logitech MX Master 3 Wireless Mouse',brand:'Logitech',cat:'电子产品',cond:'9成新',price:65,
+    descZh:'原装盒子和 USB 接收器都在，侧边滚轮和按键全部正常，电池健康。换成 3S 了所以出掉。',
+    descEn:'Original box and USB receiver included. Side wheel and all buttons work perfectly, battery health is great. Upgraded to the 3S so letting this go.',
+    thumb:placeholder('鼠','#0e9f6e'),createdAt:ago(1),status:'review'});
+
+  const c=mk({nameZh:'宜家 POÄNG 单人扶手椅',nameEn:'IKEA POÄNG Armchair',brand:'IKEA',cat:'家具',cond:'7成新',price:55,
+    descZh:'坐垫有轻微压痕，木框架结构完好没有松动。坐着看书真的很舒服。自提，能帮忙搬到楼下。',
+    descEn:'Slight indentation on the cushion, wooden frame is solid with no wobble. Super comfy for reading. Pickup only, I can help carry it downstairs.',
+    thumb:placeholder('椅','#1c64f2'),createdAt:ago(0),status:'approved'});
+
+  const e=mk({nameZh:'Nintendo Switch 续航版 + 2 个游戏',nameEn:'Nintendo Switch (OLED) + 2 Games',brand:'Nintendo',cat:'电子产品',cond:'几乎全新',price:280,
+    descZh:'去年买的，玩得很少。含塞尔达王国之泪和马造2实体卡带，屏幕贴了膜没有任何划痕。',
+    descEn:'Bought last year, barely used. Comes with Zelda TotK and Mario Maker 2 physical cartridges. Screen protector applied since day one, zero scratches.',
+    thumb:placeholder('S','#e02424'),createdAt:ago(22),status:'approved',postedAt:ago(19)});
+  PLATFORMS.forEach(p=>e.platforms[p.k]={state:'posted',at:ago(19),note:''});
+
+  items=[b,c,a,e];
+  meta.seeded=true; save();
+}
+
+/* ================= navigation ================= */
+function go(v){
+  curView=v;
+  $$('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));
+  $$('.tabs button,.bnav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ================= draft photos ================= */
+async function addFiles(files){
+  const list=[...files].filter(f=>f.type.startsWith('image/'));
+  if(!list.length)return;
+  if(draftPhotos.length+list.length>9){toast('最多 9 张，多的会被忽略',1);}
+  for(const f of list.slice(0,9-draftPhotos.length)){
+    const full=await compress(f,1024,0.78);
+    const thumb=await compress(f,180,0.6);
+    if(full) draftPhotos.push({id:uid('ph'),full,thumb});
+  }
+  renderDraft();
+}
+function renderDraft(){
+  $('#thumbs').innerHTML=draftPhotos.map((p,i)=>
+    `<div class="th"><img src="${p.thumb}" alt=""><span class="no">${i+1}</span>
+      <button class="del" data-rm="${p.id}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>`).join('');
+  $('#thumbs').querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{draftPhotos=draftPhotos.filter(p=>p.id!==b.dataset.rm);renderDraft();});
+  $('#aiHint').textContent = hasAI()
+    ? (draftPhotos.length? `已选 ${draftPhotos.length} 张，AI 会读前 4 张来识别` : 'AI 已就绪，上传照片后点识别')
+    : '还没填 AI Key。不填也完全能用 —— 直接点下面的「手动填写」，自己敲物品名和价格就行。想让 AI 帮你认图，去右上角「设置」填一个 Key。';
+}
+function resetForm(){
+  ['fNameZh','fNameEn','fBrand','fPrice','fDescZh','fDescEn'].forEach(i=>$('#'+i).value='');
+  $('#fCat').value='其他'; $('#fCond').value='9成新'; $('#fLoc').value=settings.loc;
+  draftPhotos=[]; renderDraft();
+}
+async function saveDraft(){
+  const nz=$('#fNameZh').value.trim(), ne=$('#fNameEn').value.trim();
+  if(!nz&&!ne){toast('至少填一个物品名称',1);$('#fNameZh').focus();return;}
+  const it=newItem({
+    nameZh:nz,nameEn:ne,brand:$('#fBrand').value.trim(),cat:$('#fCat').value,cond:$('#fCond').value,
+    price:+$('#fPrice').value||0,descZh:$('#fDescZh').value.trim(),descEn:$('#fDescEn').value.trim(),
+    loc:$('#fLoc').value.trim()||settings.loc,
+    thumb:draftPhotos[0]?draftPhotos[0].thumb:'',
+    photos:draftPhotos.map(p=>p.id)
+  });
+  for(const p of draftPhotos) await dbPut(p.id,p.full);
+  items.unshift(it); save();
+  resetForm(); render(); go('review');
+  toast('已保存到待审核');
+  if(items.length>=30&&items.length-meta.lastBackupCount>=30)
+    setTimeout(()=>toast('数据已积累 '+items.length+' 条，建议导出一次备份'),2800);
+}
+
+/* ================= settings ================= */
+function openSettings(){
+  $('#sUrl').value=settings.url; $('#sKey').value=settings.key;
+  $('#sModelV').value=settings.modelV; $('#sModelT').value=settings.modelT;
+  $('#sCur').value=settings.cur; $('#sLoc').value=settings.loc;
+  $('#sStale').value=settings.stale; $('#sContact').value=settings.contact;
+  $('#sBridge').value=settings.bridge||DEF_SET.bridge;
+  $('#testMsg').textContent=''; $('#bridgeCheckMsg').textContent=''; $('#loginStatusMsg').textContent='';
+  renderStore();
+  $('#mSettings').classList.add('on');
+}
+function applySettings(){
+  settings.url=$('#sUrl').value.trim()||DEF_SET.url;
+  settings.key=$('#sKey').value.trim();
+  settings.modelV=$('#sModelV').value.trim()||DEF_SET.modelV;
+  settings.modelT=$('#sModelT').value.trim()||DEF_SET.modelT;
+  settings.cur=$('#sCur').value; settings.loc=$('#sLoc').value.trim();
+  settings.stale=+$('#sStale').value||14; settings.contact=$('#sContact').value.trim();
+  settings.bridge=$('#sBridge').value.trim()||DEF_SET.bridge;
+  saveSet(); $('#curHint').textContent=settings.cur; renderDraft(); render(); checkBridge(true);
+  $('#mSettings').classList.remove('on'); toast('设置已保存');
+}
+
+/* ================= setup wizard ================= */
+let wizStep=1;
+const WIZ_LAST=4;
+
+function wizShow(n){
+  wizStep=Math.min(WIZ_LAST,Math.max(1,n));
+  $$('.wstep').forEach(s=>s.classList.toggle('on',+s.dataset.step===wizStep));
+  $$('.wiz-dots i').forEach((d,i)=>d.classList.toggle('on',i<wizStep));
+  $('#wBack').classList.toggle('hide',wizStep===1);
+  $('#wNext').textContent = wizStep===1?'开始设置' : wizStep===WIZ_LAST?'进入工作台' : '下一步';
+  $('.wiz-b').scrollTop=0;
+  if(wizStep===2) setTimeout(()=>$('#wLoc').focus(),160);
+}
+
+function openWizard(){
+  // 预填已有设置，重跑向导时不会白屏
+  $('#wLoc').value=settings.loc===DEF_SET.loc?'':settings.loc;
+  $('#wCur').value=settings.cur;
+  $('#wStale').value=settings.stale||14;
+  $('#wContact').value=settings.contact||'';
+  $('#wUrl').value=settings.key?settings.url:'';
+  $('#wKey').value=settings.key||'';
+  $('#wModelV').value=settings.key?settings.modelV:'';
+  $('#wModelT').value=settings.key?settings.modelT:'';
+  $('#wTestMsg').textContent='';
+  $('#wKeepDemo').checked=items.some(i=>i.demo);
+  $('#wKeepDemo').closest('label').style.display=items.some(i=>i.demo)?'flex':'none';
+  wizShow(1);
+  $('#mWizard').classList.add('on');
+}
+
+function wizCommit(){
+  settings.loc=$('#wLoc').value.trim()||DEF_SET.loc;
+  settings.cur=$('#wCur').value;
+  settings.stale=+$('#wStale').value||14;
+  settings.contact=$('#wContact').value.trim();
+  const k=$('#wKey').value.trim();
+  if(k){
+    settings.key=k;
+    settings.url=$('#wUrl').value.trim()||DEF_SET.url;
+    settings.modelV=$('#wModelV').value.trim()||DEF_SET.modelV;
+    settings.modelT=$('#wModelT').value.trim()||DEF_SET.modelT;
+  }
+  saveSet();
+
+  // 用户选择不保留示例数据
+  if(!$('#wKeepDemo').checked){
+    items.filter(i=>i.demo).forEach(i=>i.photos.forEach(dbDel));
+    items=items.filter(i=>!i.demo);
+  }
+  meta.onboarded=true; save();
+
+  $('#curHint').textContent=settings.cur;
+  $('#fLoc').value=settings.loc;
+  renderDraft(); render();
+  $('#mWizard').classList.remove('on');
+  toast(k?'设置完成，AI 已就绪':'设置完成，开始录第一件东西吧');
+}
+
+function bindWizard(){
+  $('#wNext').onclick=()=>{
+    if(wizStep===2 && !$('#wLoc').value.trim()){
+      toast('自提地点得填一下，文案里要用',1);
+      $('#wLoc').focus(); return;
+    }
+    if(wizStep===WIZ_LAST){ wizCommit(); return; }
+    wizShow(wizStep+1);
+  };
+  $('#wBack').onclick=()=>wizShow(wizStep-1);
+  $('#wLoc').addEventListener('keydown',e=>{if(e.key==='Enter')$('#wNext').click()});
+
+  $('#wTest').onclick=async()=>{
+    const m=$('#wTestMsg');
+    const k=$('#wKey').value.trim();
+    if(!k){m.textContent='还没填 Key';m.style.color='#c27803';return;}
+    m.textContent='测试中…'; m.style.color='';
+    const bak={url:settings.url,key:settings.key,modelT:settings.modelT};
+    settings.url=$('#wUrl').value.trim()||DEF_SET.url;
+    settings.key=k;
+    settings.modelT=$('#wModelT').value.trim()||DEF_SET.modelT;
+    try{
+      const r=await callAI([{role:'user',content:'回复两个字：正常'}],settings.modelT);
+      m.textContent='能用 ✓ '+r.trim().slice(0,16); m.style.color='#057a55';
+    }catch(e){
+      m.textContent='连不上：'+e.message.slice(0,60); m.style.color='#e02424';
+      Object.assign(settings,bak);
+    }
+  };
+}
+
+/* ================= bind ================= */
+function bind(){
+  $$('.tabs button,.bnav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+  $$('[data-close]').forEach(b=>b.onclick=()=>b.closest('.mask').classList.remove('on'));
+  $$('.mask').forEach(m=>{ if(m.id!=='mWizard') m.onclick=e=>{if(e.target===m)m.classList.remove('on')}; });
+  bindWizard();
+  $('#btnRerunSetup').onclick=()=>{ $('#mSettings').classList.remove('on'); openWizard(); };
+
+  const dz=$('#dz'), fi=$('#fileIn');
+  dz.onclick=()=>fi.click();
+  fi.onchange=()=>{addFiles(fi.files);fi.value='';};
+  ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('over')}));
+  ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('over')}));
+  dz.addEventListener('drop',e=>{if(e.dataTransfer.files.length)addFiles(e.dataTransfer.files)});
+
+  $('#btnAI').onclick=aiRecognize;
+  $('#btnTrans').onclick=aiTranslate;
+  $('#btnManual').onclick=()=>{$('#formCard').scrollIntoView({behavior:'smooth'});$('#fNameZh').focus()};
+  $('#btnSave').onclick=saveDraft;
+  $('#btnReset').onclick=()=>{if(confirm('清空当前表单和已选照片？'))resetForm()};
+
+  $('#btnSettings').onclick=openSettings;
+  $('#btnSaveSet').onclick=applySettings;
+  $('#btnExport').onclick=()=>doExport(true);
+  $('#btnExport2').onclick=()=>doExport(true);
+  $('#btnExportLite').onclick=()=>doExport(false);
+  $('#btnImport').onclick=()=>$('#importIn').click();
+  $('#btnImport2').onclick=()=>$('#importIn').click();
+  $('#importIn').onchange=e=>{if(e.target.files[0])doImport(e.target.files[0]);e.target.value=''};
+
+  $('#btnClearDemo').onclick=()=>{
+    const n=items.filter(i=>i.demo).length;
+    if(!n){toast('没有示例数据了');return;}
+    if(confirm(`删除 ${n} 条示例数据？（你自己录入的不受影响）`)){
+      items.filter(i=>i.demo).forEach(i=>i.photos.forEach(dbDel));
+      items=items.filter(i=>!i.demo); save(); render(); toast('示例数据已清空');
+    }
+  };
+  $('#btnClearAll').onclick=()=>{
+    if(!confirm(`⚠️ 将删除全部 ${items.length} 件物品和所有照片，无法撤销！\n\n强烈建议先点「导出 JSON 备份」。\n\n确定继续吗？`))return;
+    if(!confirm('最后确认一次：真的要清空全部数据吗？'))return;
+    items.forEach(i=>i.photos.forEach(dbDel));
+    items=[]; meta.seeded=true; save(); render(); toast('已清空');
+  };
+
+  $('#btnReport').onclick=showReport;
+  $('#btnRetryAll').onclick=()=>{
+    let n=0;
+    items.forEach(it=>PLATFORMS.forEach(p=>{if(it.platforms[p.k].state==='failed'){it.platforms[p.k].state='pending';n++}}));
+    if(!n){toast('没有失败项');return}
+    save(); render(); toast(n+' 个失败项已重置为待发布');
+  };
+
+  $('#btnTest').onclick=async()=>{
+    applySettingsSilent();
+    const m=$('#testMsg'); m.textContent='测试中…'; m.style.color='';
+    try{
+      const r=await callAI([{role:'user',content:'回复两个字：正常'}],settings.modelT);
+      m.textContent='连接正常：'+r.trim().slice(0,20); m.style.color='#057a55';
+    }catch(e){m.textContent='失败：'+e.message.slice(0,80); m.style.color='#e02424';}
+  };
+  function applySettingsSilent(){
+    settings.url=$('#sUrl').value.trim()||DEF_SET.url;
+    settings.key=$('#sKey').value.trim();
+    settings.modelT=$('#sModelT').value.trim()||DEF_SET.modelT;
+    settings.modelV=$('#sModelV').value.trim()||DEF_SET.modelV;
+  }
+
+  $('#btnBridge').onclick=()=>{ openSettings(); setTimeout(()=>$('#btnBridgeCheck').click(),120); };
+
+  $('#btnBridgeCheck').onclick=async()=>{
+    settings.bridge=$('#sBridge').value.trim()||DEF_SET.bridge;
+    const m=$('#bridgeCheckMsg'); m.textContent='检查中…'; m.style.color='';
+    const j=await checkBridge(true);
+    if(j){
+      m.textContent=`在线 · Kijiji适配器${j.kijiji?'✓':'✗'} · 浏览器适配器${j.browser?'✓':'✗'}`;
+      m.style.color='#057a55';
+    }else{
+      m.textContent='离线 — 先在 automation/bridge 里双击 start-bridge.bat';
+      m.style.color='#e02424';
+    }
+  };
+
+  $$('[data-login]').forEach(b=>b.onclick=async()=>{
+    settings.bridge=$('#sBridge').value.trim()||DEF_SET.bridge;
+    const p=b.dataset.login, m=$('#loginStatusMsg');
+    m.textContent='正在打开浏览器…'; m.style.color='';
+    b.disabled=true;
+    try{
+      await bridgeFetch('/login/'+p,{method:'POST'},1000*60*5);
+      m.textContent='浏览器已打开，登录完成后关掉那个窗口，会话会自动保存。';
+      m.style.color='#057a55';
+    }catch(e){ m.textContent='打开失败：'+e.message; m.style.color='#e02424'; }
+    finally{ b.disabled=false; }
+  });
+
+  $('#btnLoginStatus').onclick=async()=>{
+    settings.bridge=$('#sBridge').value.trim()||DEF_SET.bridge;
+    const m=$('#loginStatusMsg'); m.textContent='检查中…'; m.style.color='';
+    try{
+      const j=await bridgeFetch('/login-status',{},1000*60);
+      m.innerHTML=(j.results||[]).map(r=>{
+        const p=PLATFORMS.find(x=>x.k===r.platform);
+        return `${esc(p?p.n:r.platform)}：<b style="color:${r.loggedIn?'#057a55':'#e02424'}">${r.loggedIn?'已登录':'未登录'}</b>${r.note?' <span class="muted">('+esc(r.note)+')</span>':''}`;
+      }).join(' &nbsp;|&nbsp; ');
+    }catch(e){ m.textContent='检查失败：'+e.message; m.style.color='#e02424'; }
+  };
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape') $$('.mask.on').forEach(m=>{ if(m.id!=='mWizard') m.classList.remove('on'); });
+  });
+}
+
+/* ================= init ================= */
+load(); seed();
+if(!settings.loc) settings.loc=DEF_SET.loc;
+$('#curHint').textContent=settings.cur;
+$('#fLoc').value=settings.loc;
+bind(); renderDraft(); render();
+checkBridge(true);
+if(!meta.onboarded){
+  openWizard();
+}else if(items.length>=30&&items.length-meta.lastBackupCount>=30){
+  setTimeout(()=>toast('数据已积累 '+items.length+' 条，建议导出一次备份'),1800);
+}
+</script>
+</body>
+</html>

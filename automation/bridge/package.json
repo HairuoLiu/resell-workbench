@@ -1,0 +1,13 @@
+{
+  "name": "resell-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local bridge service for the secondhand resale workbench (Kijiji API + Playwright for FB/Karrot/Xiaohongshu)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "playwright": "^1.44.0"
+  }
+}
