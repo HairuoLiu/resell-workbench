@@ -445,11 +445,15 @@ header{
       <div class="sec-h" style="margin-bottom:12px"><h2>AI 识图 / 翻译服务</h2></div>
       <p class="muted" style="margin:0 0 12px">兼容 OpenAI 格式的任意服务都能接：OpenAI、通义千问、DeepSeek、Kimi、或本地 Ollama / LM Studio。Key 只存在你自己的浏览器里，不会上传到任何地方。</p>
       <div class="fgrid">
-        <div class="f full"><label>Base URL</label><input id="sUrl" placeholder="https://api.openai.com/v1"></div>
+        <div class="f full"><label>服务商</label><select id="sProv" class="prov-sel"></select></div>
+        <div class="f full"><label>Base URL <span class="hint">选了上面会自动填，也能自己改</span></label><input id="sUrl" placeholder="https://api.openai.com/v1"></div>
         <div class="f full"><label>API Key</label><input id="sKey" type="password" placeholder="sk-..."></div>
-        <div class="f"><label>视觉模型 <span class="hint">识图用</span></label><input id="sModelV" placeholder="gpt-4o-mini"></div>
-        <div class="f"><label>文本模型 <span class="hint">翻译用</span></label><input id="sModelT" placeholder="gpt-4o-mini"></div>
+        <div class="f"><label>视觉模型 <span class="hint">识图用</span></label><input id="sModelV" list="sModelsV" placeholder="gpt-4o-mini"></div>
+        <div class="f"><label>文本模型 <span class="hint">翻译用</span></label><input id="sModelT" list="sModelsT" placeholder="gpt-4o-mini"></div>
+        <datalist id="sModelsV"></datalist>
+        <datalist id="sModelsT"></datalist>
       </div>
+      <p class="muted" id="sProvNote" style="margin:2px 0 0;display:none"></p>
       <div class="row" style="margin-top:12px">
         <button class="btn sm" id="btnTest">测试连接</button>
       </div>
@@ -565,17 +569,21 @@ header{
       <h2>要不要让 AI 帮你写？</h2>
       <p class="wsub">填了 Key，拍张照就能自动认出是什么东西、值多少钱、并写好中英文文案。<br><b>不填也完全能用</b> —— 只是所有内容要自己打字。</p>
       <div class="fgrid">
+        <div class="f full"><label>服务商</label><select id="wProv" class="prov-sel"></select></div>
         <div class="f full">
-          <label>服务地址 <span class="hint">默认 OpenAI，也能填别家</span></label>
+          <label>服务地址 <span class="hint">选了上面会自动填</span></label>
           <input id="wUrl" placeholder="https://api.openai.com/v1" autocomplete="off">
         </div>
         <div class="f full">
           <label>API Key</label>
           <input id="wKey" type="password" placeholder="sk-... 粘贴进来就行" autocomplete="off">
         </div>
-        <div class="f"><label>识图模型</label><input id="wModelV" placeholder="gpt-4o-mini" autocomplete="off"></div>
-        <div class="f"><label>翻译模型</label><input id="wModelT" placeholder="gpt-4o-mini" autocomplete="off"></div>
+        <div class="f"><label>识图模型</label><input id="wModelV" list="wModelsV" placeholder="gpt-4o-mini" autocomplete="off"></div>
+        <div class="f"><label>翻译模型</label><input id="wModelT" list="wModelsT" placeholder="gpt-4o-mini" autocomplete="off"></div>
+        <datalist id="wModelsV"></datalist>
+        <datalist id="wModelsT"></datalist>
       </div>
+      <p class="muted" id="wProvNote" style="margin:2px 0 0;display:none"></p>
       <div class="row" style="margin-top:13px">
         <button class="btn sm" id="wTest">测试一下能不能用</button>
       </div>
@@ -633,6 +641,33 @@ const COND_EN={'全新未拆':'Brand new, unopened','几乎全新':'Like new','9
 const CAT_EN={'家具':'Furniture','电子产品':'Electronics','家电':'Appliances','厨房用品':'Kitchen','服饰鞋包':'Clothing & Accessories','图书教材':'Books','运动户外':'Sports & Outdoors','母婴':'Baby & Kids','其他':'Other'};
 const CUR_SYM={CAD:'$',USD:'$',CNY:'¥'};
 const DEF_SET={url:'https://api.openai.com/v1',key:'',modelV:'gpt-4o-mini',modelT:'gpt-4o-mini',cur:'CAD',loc:'Waterloo, ON',stale:14,contact:'',bridge:'http://localhost:8891'};
+
+/* ================= AI 服务商预设 ================= */
+/* 选服务商 → 自动填 Base URL + 该家真实模型清单；模型框是「可输入 + 下拉建议」，没有就自己打 */
+const PROVIDERS=[
+  {k:'openai',  n:'OpenAI',             url:'https://api.openai.com/v1',
+    vision:['gpt-4o','gpt-4o-mini','gpt-4.1','gpt-4.1-mini'],
+    text:['gpt-4o-mini','gpt-4o','gpt-4.1-mini','gpt-4.1','o4-mini'], note:''},
+  {k:'deepseek',n:'DeepSeek (深度求索)', url:'https://api.deepseek.com/v1',
+    vision:[],
+    text:['deepseek-chat','deepseek-reasoner'], note:'DeepSeek 暂无专用视觉模型，识图建议用 OpenAI / Gemini / 通义千问'},
+  {k:'gemini',  n:'Google Gemini',      url:'https://generativelanguage.googleapis.com/v1beta/openai/',
+    vision:['gemini-2.0-flash','gemini-2.5-flash','gemini-2.5-pro','gemini-1.5-flash'],
+    text:['gemini-2.0-flash','gemini-2.5-flash','gemini-2.5-pro'], note:''},
+  {k:'qwen',    n:'通义千问 (阿里)',     url:'https://dashscope.aliyuncs.com/compatible-mode/v1',
+    vision:['qwen-vl-max','qwen2.5-vl-72b-instruct','qwen2.5-vl-32b-instruct','qwen-vl-plus'],
+    text:['qwen-plus','qwen-max','qwen-turbo','qwen2.5-72b-instruct'], note:''},
+  {k:'kimi',    n:'Kimi (月之暗面)',     url:'https://api.moonshot.cn/v1',
+    vision:['moonshot-v1-8k-vision-preview','moonshot-v1-32k-vision-preview'],
+    text:['moonshot-v1-8k','moonshot-v1-32k','moonshot-v1-128k'], note:''},
+  {k:'ollama',  n:'Ollama (本机)',       url:'http://localhost:11434/v1',
+    vision:['llava','minicpm-v','qwen2.5vl'],
+    text:['llama3.1','qwen2.5','mistral','deepseek-r1'], note:'Ollama 需先本地跑起 ollama serve，模型名填你本地 pull 的那个'}
+];
+const PROV_CUSTOM={k:'custom',n:'手动输入 (自定义)',url:'',vision:[],text:[],note:''};
+function provByKey(k){return PROVIDERS.find(p=>p.k===k)||PROV_CUSTOM;}
+function provFromUrl(u){u=(u||'').trim();const p=PROVIDERS.find(p=>p.url&&p.url===u);return p?p.k:'custom';}
+function fillDatalist(id,arr){const dl=$('#'+id);if(!dl)return;dl.replaceChildren();arr.forEach(m=>{const o=document.createElement('option');o.value=m;dl.appendChild(o);});}
 
 /* ================= state ================= */
 let items=[], settings={...DEF_SET}, meta={seeded:false,lastBackupCount:0,onboarded:false};
@@ -1442,6 +1477,7 @@ async function saveDraft(){
 function openSettings(){
   $('#sUrl').value=settings.url; $('#sKey').value=settings.key;
   $('#sModelV').value=settings.modelV; $('#sModelT').value=settings.modelT;
+  syncProv('s');
   $('#sCur').value=settings.cur; $('#sLoc').value=settings.loc;
   $('#sStale').value=settings.stale; $('#sContact').value=settings.contact;
   $('#sBridge').value=settings.bridge||DEF_SET.bridge;
@@ -1485,6 +1521,7 @@ function openWizard(){
   $('#wKey').value=settings.key||'';
   $('#wModelV').value=settings.key?settings.modelV:'';
   $('#wModelT').value=settings.key?settings.modelT:'';
+  if(settings.key){ syncProv('w'); } else { const sp=$('#wProv'); if(sp) sp.value='openai'; onProvChange('w'); }
   $('#wTestMsg').textContent='';
   $('#wKeepDemo').checked=items.some(i=>i.demo);
   $('#wKeepDemo').closest('label').style.display=items.some(i=>i.demo)?'flex':'none';
@@ -1552,11 +1589,46 @@ function bindWizard(){
 }
 
 /* ================= bind ================= */
+/* 服务商预设 UI：选服务商 → 自动填 URL + 该家模型；模型框可输入也可从下拉选 */
+function initProvUI(){
+  ['s','w'].forEach(p=>{
+    const sel=$('#'+p+'Prov'); if(!sel)return;
+    sel.innerHTML=PROVIDERS.map(p2=>'<option value="'+p2.k+'">'+esc(p2.n)+'</option>').join('')+'<option value="custom">手动输入 (自定义)</option>';
+    sel.onchange=()=>onProvChange(p);
+  });
+}
+function onProvChange(p){
+  const sel=$('#'+p+'Prov'); if(!sel)return;
+  const prov=provByKey(sel.value);
+  const url=$('#'+p+'Url'), mv=$('#'+p+'ModelV'), mt=$('#'+p+'ModelT');
+  if(prov.url){ url.value=prov.url; } else { url.value=''; try{url.focus();}catch(_){} }
+  fillDatalist(p+'ModelsV', prov.vision);
+  fillDatalist(p+'ModelsT', prov.text);
+  if(prov.url){
+    mv.value=prov.vision[0]||'';
+    mt.value=prov.text[0]||'';
+  }else{
+    mv.value=''; mt.value='';
+  }
+  const note=$('#'+p+'ProvNote');
+  if(prov.note){ note.textContent='提示：'+prov.note; note.style.display=''; } else { note.style.display='none'; }
+}
+function syncProv(p){
+  const pk=provFromUrl($('#'+p+'Url').value);
+  const sel=$('#'+p+'Prov'); if(sel) sel.value=pk;
+  const prov=provByKey(pk);
+  fillDatalist(p+'ModelsV', prov.vision);
+  fillDatalist(p+'ModelsT', prov.text);
+  const note=$('#'+p+'ProvNote');
+  if(prov.note){ note.textContent='提示：'+prov.note; note.style.display=''; } else { note.style.display='none'; }
+}
+
 function bind(){
   $$('.tabs button,.bnav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
   $$('[data-close]').forEach(b=>b.onclick=()=>b.closest('.mask').classList.remove('on'));
   $$('.mask').forEach(m=>{ if(m.id!=='mWizard') m.onclick=e=>{if(e.target===m)m.classList.remove('on')}; });
   bindWizard();
+  initProvUI();
   $('#btnRerunSetup').onclick=()=>{ $('#mSettings').classList.remove('on'); openWizard(); };
 
   const dz=$('#dz'), fi=$('#fileIn');
