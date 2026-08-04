@@ -37,7 +37,7 @@ svg{display:block;flex:none}
 header{
   position:sticky;top:0;z-index:40;background:rgba(247,248,250,.88);
   backdrop-filter:saturate(180%) blur(12px);
-  margin:0 -16px;padding:12px 16px;border-bottom:1px solid var(--line);
+  margin:0;padding:12px 16px;border-bottom:1px solid var(--line);
 }
 .hdr{display:flex;align-items:center;gap:12px;max-width:1148px;margin:0 auto}
 .logo{width:34px;height:34px;border-radius:9px;background:var(--brand);display:grid;place-items:center;flex:none}
@@ -174,6 +174,9 @@ header{
 .pcell[data-s="sold"]{background:var(--blue-l);border-color:#c3ddfd}
 .pcell[data-s="sold"] .ps{color:var(--blue)}
 .pcell[data-s="skip"]{opacity:.5}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin:2px 0 14px;font-size:12px;color:var(--ink-3);font-weight:600}
+.legend .lg{display:inline-flex;align-items:center;gap:6px}
+.legend .ld{width:11px;height:11px;border-radius:3px;flex:none}
 
 /* ---------- modal ---------- */
 .mask{position:fixed;inset:0;background:rgba(17,24,39,.45);z-index:100;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
@@ -233,11 +236,13 @@ header{
 /* ---------- copy block ---------- */
 .cblock{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;margin-bottom:10px}
 .cb-h{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--line-2);border-bottom:1px solid var(--line)}
+.cb-desc{font-size:11.5px;color:var(--ink-3);padding:6px 12px 0;line-height:1.45}
 .cb-h .nm{font-size:13.5px;font-weight:700;flex:1;display:flex;align-items:center;gap:6px}
 .cb-b{padding:11px 12px;font-size:13px;line-height:1.65;white-space:pre-wrap;word-break:break-word;color:var(--ink-2);max-height:200px;overflow-y:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 .cb-f{display:flex;gap:6px;padding:9px 12px;border-top:1px solid var(--line-2);flex-wrap:wrap}
 .plogo{width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:10px;font-weight:800;color:#fff;flex:none}
 .plogo.fb{background:#1877f2}.plogo.kj{background:#3e2a56}.plogo.xhs{background:#ff2442}.plogo.kr{background:#ff6f0f}
+.plogo.xy{background:#ff5000}.plogo.cr{background:#7b2ff7}
 
 /* ---------- report ---------- */
 .rpt{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;line-height:1.7;white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;max-height:320px;overflow-y:auto}
@@ -257,7 +262,11 @@ header{
 .bnav{display:none}
 @media(max-width:768px){
   .app{padding:0 12px 96px}
-  header{margin:0 -12px;padding:10px 12px}
+  header{padding:10px 12px}
+  /* 手机上手指点得到：顶栏图标（含备份/恢复入口）和所有小号按钮都撑到 44px */
+  .ib{width:44px;height:44px}
+  .btn.sm,.btn.xs{min-height:44px;padding:0 13px}
+  .bbar .btn.sm,.dbar .btn.sm{min-height:44px}
   .hdr h1{font-size:15.5px}.hdr h1 span{display:none}
   .fgrid{grid-template-columns:1fr}
   .pgrid{grid-template-columns:repeat(2,1fr)}
@@ -276,6 +285,34 @@ header{
   #toast{bottom:110px}
 }
 @media(max-width:400px){.pgrid{grid-template-columns:1fr}}
+/* ---------- 备份 / 示例横幅 ---------- */
+.bbar,.dbar{display:flex;align-items:center;gap:10px;padding:11px 14px;margin-top:14px;border-radius:12px}
+.bbar{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412}
+.bbar svg{flex:none;color:#ea580c}
+.bbar .bb-tx{flex:1;min-width:0}
+.bbar .bb-tx b{font-size:13.5px}
+.bbar .bb-tx span{display:block;font-size:12.5px;color:#7c2d12;opacity:.9;margin-top:1px}
+.dbar{background:var(--brand-l);border:1px solid #a8e6cf;color:var(--brand-d)}
+.dbar svg{flex:none;color:var(--brand-d)}
+.dbar span{flex:1;font-size:13.5px;font-weight:600}
+.dbar .row{display:flex;gap:6px;flex:none}
+
+/* ---------- 渠道多选卡 ---------- */
+.ch-card{display:flex;flex-direction:column;gap:3px;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:#fcfcfd;cursor:pointer;flex:1 1 150px;min-width:140px;transition:.15s}
+.ch-card.on{border-color:var(--brand);background:var(--brand-l)}
+.ch-card .ch-n{font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px}
+.ch-card .ch-d{font-size:11.5px;color:var(--ink-3);line-height:1.45}
+.ch-card input{position:absolute;opacity:0;width:0;height:0}
+
+/* ---------- 进阶折叠 ---------- */
+details.adv{border:1px solid var(--line);border-radius:var(--r)}
+.adv-sum{display:flex;align-items:center;gap:8px;cursor:pointer;list-style:none;padding:0;margin:0}
+.adv-sum::-webkit-details-marker{display:none}
+.adv-sum h2{font-size:15px}
+.adv-sum .hint{color:var(--ink-3);font-size:12.5px;font-weight:400}
+details.adv[open] .adv-sum{margin-bottom:12px}
+.wiz-adv{margin-top:8px;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--line-2)}
+.wiz-adv summary{padding:2px 0;margin-bottom:4px}
 .hide{display:none!important}
 </style>
 </head>
@@ -297,7 +334,7 @@ header{
       <button class="ib" id="btnSettings" title="设置">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
-      <button class="ib" id="btnBridge" title="桥接服务状态（真·一键发布）">
+      <button class="ib" id="btnBridge" title="自动发布助手状态（真·一键发布）">
         <span id="bridgeDot" style="width:9px;height:9px;border-radius:50%;background:#9ca3af;display:inline-block"></span>
       </button>
     </div>
@@ -305,6 +342,9 @@ header{
 </header>
 
 <div class="app">
+
+  <!-- ============ 数据安全 / 示例数据 横幅 ============ -->
+  <div id="bars"></div>
 
   <!-- ============ 今天要处理 ============ -->
   <section id="today"></section>
@@ -317,7 +357,7 @@ header{
     </button>
     <button data-v="review">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-      人工审核<span class="bdg hide" id="bdgReview">0</span>
+      等你确认<span class="bdg hide" id="bdgReview">0</span>
     </button>
     <button data-v="track">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -381,7 +421,7 @@ header{
       <div class="row" style="margin-top:14px">
         <button class="btn pri" id="btnSave" style="flex:1">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          保存，送去人工审核
+          存起来，等我过一眼
         </button>
         <button class="btn" id="btnReset">清空表单</button>
       </div>
@@ -390,7 +430,7 @@ header{
 
   <!-- ============ VIEW 2 审核 ============ -->
   <div class="view" id="v-review">
-    <div class="sec-h"><h2>待你审核</h2><span class="cnt" id="cntReview">0</span></div>
+    <div class="sec-h"><h2>等你过一眼</h2><span class="cnt" id="cntReview">0</span></div>
     <div class="items" id="listReview"></div>
 
     <div class="sec-h" style="margin-top:22px"><h2>已通过 · 待上架</h2><span class="cnt" id="cntApproved">0</span></div>
@@ -410,6 +450,13 @@ header{
         失败项全部重置为待发
       </button>
     </div>
+    <div class="legend" id="trackLegend">
+      <span class="lg"><i class="ld" style="background:var(--ink-4)"></i>待发布</span>
+      <span class="lg"><i class="ld" style="background:var(--brand)"></i>已发布</span>
+      <span class="lg"><i class="ld" style="background:var(--red)"></i>失败</span>
+      <span class="lg"><i class="ld" style="background:var(--blue)"></i>已售出</span>
+      <span class="lg"><i class="ld" style="opacity:.4;background:var(--ink-4)"></i>跳过</span>
+    </div>
     <div class="items" id="listTrack"></div>
   </div>
 </div>
@@ -420,7 +467,7 @@ header{
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg>录入
   </button>
   <button data-v="review">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>审核<span class="bdg hide" id="bdgReview2">0</span>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>待确认<span class="bdg hide" id="bdgReview2">0</span>
   </button>
   <button data-v="track">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>上架<span class="bdg hide" id="bdgTrack2">0</span>
@@ -443,11 +490,16 @@ header{
   <div class="modal-b">
     <div class="card pad">
       <div class="sec-h" style="margin-bottom:12px"><h2>AI 识图 / 翻译服务</h2></div>
-      <p class="muted" style="margin:0 0 12px">兼容 OpenAI 格式的任意服务都能接：OpenAI、通义千问、DeepSeek、Kimi、或本地 Ollama / LM Studio。Key 只存在你自己的浏览器里，不会上传到任何地方。</p>
+      <p class="muted" style="margin:0 0 10px">兼容 OpenAI 格式的任意服务都能接：OpenAI、通义千问、DeepSeek、Kimi、或本机 Ollama / LM Studio。Key 只存在你自己的浏览器里，不会上传到任何地方。</p>
+      <div class="wnote green" style="margin:0 0 12px;display:flex;gap:10px;align-items:flex-start">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:2px;flex:none"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8.5l2.2 2.2L7 12.9"/><line x1="11.5" y1="12.9" x2="16" y2="12.9"/></svg>
+        <div><b>用本机 Ollama：图片不出本机、零成本、还能离线用。</b><br>
+        地址填 <b>http://localhost:11434/v1</b>，<b>API Key 留空</b>即可。适合不想把家里照片传给第三方、或者干脆没网的时候。</div>
+      </div>
       <div class="fgrid">
         <div class="f full"><label>服务商</label><select id="sProv" class="prov-sel"></select></div>
         <div class="f full"><label>Base URL <span class="hint">选了上面会自动填，也能自己改</span></label><input id="sUrl" placeholder="https://api.openai.com/v1"></div>
-        <div class="f full"><label>API Key</label><input id="sKey" type="password" placeholder="sk-..."></div>
+        <div class="f full"><label>API Key <span class="hint">本机 Ollama / LM Studio 留空即可</span></label><input id="sKey" type="password" placeholder="sk-...；本机模型不用填"></div>
         <div class="f"><label>视觉模型 <span class="hint">识图用</span></label><input id="sModelV" list="sModelsV" placeholder="gpt-4o-mini"></div>
         <div class="f"><label>文本模型 <span class="hint">翻译用</span></label><input id="sModelT" list="sModelsT" placeholder="gpt-4o-mini"></div>
         <datalist id="sModelsV"></datalist>
@@ -456,7 +508,9 @@ header{
       <p class="muted" id="sProvNote" style="margin:2px 0 0;display:none"></p>
       <div class="row" style="margin-top:12px">
         <button class="btn sm" id="btnTest">测试连接</button>
+        <button class="btn sm" id="btnLocalModels" style="display:none">看看本机有哪些模型</button>
       </div>
+      <p class="muted" id="localModelsMsg" style="margin:9px 0 0;white-space:pre-wrap"></p>
       <div class="aiMsg" id="testMsg"></div>
     </div>
 
@@ -471,11 +525,17 @@ header{
     </div>
 
     <div class="card pad sec">
-      <div class="sec-h" style="margin-bottom:12px"><h2>桥接服务 <span class="hint">真·一键发布用</span></h2></div>
-      <p class="muted" style="margin:0 0 12px">先在本机运行 <b>start-bridge.bat</b>（在 automation/bridge 文件夹里）。下面填它运行的地址。FB/Karrot/小红书 第一次发之前，先点「登录」按钮在弹出的 Chrome 里手动登一次，会话会保存。</p>
-      <div class="f full" style="margin-bottom:12px"><label>桥接服务地址</label><input id="sBridge" placeholder="http://localhost:8891"></div>
+      <div class="sec-h" style="margin-bottom:12px"><h2>我的渠道</h2><span class="cnt" id="cntCh">0</span></div>
+      <p class="muted" style="margin:0 0 12px">只勾你真正要用的平台，首页和发布流程就只显示这些。新加的闲鱼 / Carousell 默认不勾选。</p>
+      <div class="row" id="chToggles"></div>
+    </div>
+
+    <details class="card pad sec adv">
+      <summary class="adv-sum"><h2>自动发布助手（进阶，可选）</h2><span class="hint">普通用户用「复制跳转」就够了</span></summary>
+      <p class="muted" style="margin:0 0 12px">想让它自动帮你把文案发到平台？需要先在本机运行 <b>start-bridge.bat</b>（在 automation/bridge 文件夹里），下面填它运行的地址。FB/Karrot/小红书 第一次发之前，先点「登录」按钮在弹出的 Chrome 里手动登一次，会话会保存。</p>
+      <div class="f full" style="margin-bottom:12px"><label>自动发布助手地址</label><input id="sBridge" placeholder="http://localhost:8891"></div>
       <div class="row" style="margin-bottom:10px">
-        <button class="btn sm" id="btnBridgeCheck">检查桥接状态</button>
+        <button class="btn sm" id="btnBridgeCheck">检查发布状态</button>
         <span class="muted" id="bridgeCheckMsg" style="align-self:center"></span>
       </div>
       <div class="row">
@@ -485,7 +545,7 @@ header{
         <button class="btn sm" id="btnLoginStatus">检查登录状态</button>
       </div>
       <p class="muted" id="loginStatusMsg" style="margin:10px 0 0"></p>
-    </div>
+    </details>
 
     <div class="card pad sec">
       <div class="sec-h" style="margin-bottom:12px"><h2>数据</h2></div>
@@ -523,7 +583,7 @@ header{
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#057a55" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
       </div>
       <h2>欢迎使用二手转卖工作台</h2>
-      <p class="wsub">一件东西录一次，四个平台的文案自动写好。<br>下面 3 步大概花你 <b>1 分钟</b>，之后就再也不用填了。</p>
+      <p class="wsub">一件东西录一次，各个平台的文案自动写好。<br>下面 3 步大概花你 <b>1 分钟</b>，之后就再也不用填了。</p>
       <ul class="wiz-list">
         <li><span class="wi g"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
           <div><b>不用注册，不用账号</b><span>没有服务器，也没人收集你的信息</span></div></li>
@@ -561,37 +621,46 @@ header{
           <input id="wContact" placeholder="微信号 / 邮箱 / 电话，不想留就空着">
         </div>
       </div>
-      <div class="wnote">💡 只有<b>自提地点</b>是必填的。填个大概区域就行，别写详细门牌号 —— 文案是要发到公开平台的。</div>
+      <div class="wnote"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>只有<b>自提地点</b>是必填的。填个大概区域就行，别写详细门牌号 —— 文案是要发到公开平台的。</div>
     </div>
 
     <!-- Step 3 · AI -->
     <div class="wstep" data-step="3">
       <h2>要不要让 AI 帮你写？</h2>
       <p class="wsub">填了 Key，拍张照就能自动认出是什么东西、值多少钱、并写好中英文文案。<br><b>不填也完全能用</b> —— 只是所有内容要自己打字。</p>
-      <div class="fgrid">
-        <div class="f full"><label>服务商</label><select id="wProv" class="prov-sel"></select></div>
-        <div class="f full">
-          <label>服务地址 <span class="hint">选了上面会自动填</span></label>
-          <input id="wUrl" placeholder="https://api.openai.com/v1" autocomplete="off">
-        </div>
-        <div class="f full">
-          <label>API Key</label>
-          <input id="wKey" type="password" placeholder="sk-... 粘贴进来就行" autocomplete="off">
-        </div>
-        <div class="f"><label>识图模型</label><input id="wModelV" list="wModelsV" placeholder="gpt-4o-mini" autocomplete="off"></div>
-        <div class="f"><label>翻译模型</label><input id="wModelT" list="wModelsT" placeholder="gpt-4o-mini" autocomplete="off"></div>
-        <datalist id="wModelsV"></datalist>
-        <datalist id="wModelsT"></datalist>
+      <div class="f full">
+        <label>API Key <span class="hint">粘进来就能用；本机 Ollama / LM Studio 留空即可</span></label>
+        <input id="wKey" type="password" placeholder="sk-... 粘贴进来就行；本机模型不用填" autocomplete="off">
       </div>
-      <p class="muted" id="wProvNote" style="margin:2px 0 0;display:none"></p>
+      <p class="muted" style="margin:2px 0 0">没 Key 也能用，只是要自己打字。已默认帮你选好 <b>DeepSeek（推荐、便宜）</b>，一般不用改。</p>
       <div class="row" style="margin-top:13px">
         <button class="btn sm" id="wTest">测试一下能不能用</button>
       </div>
       <div class="aiMsg" id="wTestMsg"></div>
+      <details class="wiz-adv">
+        <summary class="adv-sum"><h2>高级：换 AI 服务商 / 用本机 Ollama</h2></summary>
+        <div class="fgrid" style="margin-top:12px">
+          <div class="f full"><label>服务商</label><select id="wProv" class="prov-sel"></select></div>
+          <div class="f full">
+            <label>服务地址 <span class="hint">选了上面会自动填</span></label>
+            <input id="wUrl" placeholder="https://api.openai.com/v1" autocomplete="off">
+          </div>
+          <div class="f"><label>识图模型</label><input id="wModelV" list="wModelsV" placeholder="gpt-4o-mini" autocomplete="off"></div>
+          <div class="f"><label>翻译模型</label><input id="wModelT" list="wModelsT" placeholder="gpt-4o-mini" autocomplete="off"></div>
+          <datalist id="wModelsV"></datalist>
+          <datalist id="wModelsT"></datalist>
+        </div>
+        <p class="muted" id="wProvNote" style="margin:2px 0 0;display:none"></p>
+      </details>
       <div class="wnote">
         <b>去哪弄 Key？</b> OpenAI、DeepSeek、通义千问、Kimi 都行，注册后在控制台生成一个粘过来。<br>
-        国内用户推荐 <b>DeepSeek</b>（便宜）；也支持本机 Ollama / LM Studio，完全离线。<br>
+        国内用户推荐 <b>DeepSeek</b>（便宜）。<br>
         <b>Key 只存在你自己浏览器里</b>，不会发给我们 —— 我们也没有服务器可以收。
+      </div>
+      <div class="wnote green">
+        <b>不想花钱、也不想让照片出门？展开上面的「高级」，选「Ollama (本机)」。</b><br>
+        模型跑在你自己电脑上：<b>照片不出本机</b>、<b>一分钱不花</b>、<b>断网也能用</b>，Key 留空即可。<br>
+        三步：装好 Ollama → 命令行跑 <b>ollama serve</b> → 再跑 <b>ollama pull qwen2.5vl</b>，然后模型名填 <b>qwen2.5vl</b>。
       </div>
     </div>
 
@@ -605,10 +674,10 @@ header{
       <ul class="wiz-list">
         <li><span class="wi b">1</span><div><b>拍照录入</b><span>照片拖进去，点「AI 识别」或自己填</span></div></li>
         <li><span class="wi b">2</span><div><b>你亲自过一眼</b><span>重点看价格 —— AI 有时候会估歪</span></div></li>
-        <li><span class="wi b">3</span><div><b>复制文案去发布</b><span>四个平台各一份，风格都不一样</span></div></li>
+        <li><span class="wi b">3</span><div><b>复制文案去发布</b><span>每个平台各一份，风格都不一样</span></div></li>
       </ul>
       <div class="wnote amber">
-        <b>⚠️ 一件事请务必记住：</b>数据存在浏览器里，<b>清理浏览器缓存 = 数据全没</b>。<br>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> <b>一件事请务必记住：</b>数据存在浏览器里，<b>清理浏览器缓存 = 数据全没</b>。<br>
         隔段时间点一下顶部「导出备份」，存到网盘或 U 盘。真丢了才有得救。
       </div>
       <label class="ab-c" style="margin-top:14px;display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer">
@@ -631,16 +700,32 @@ header{
 'use strict';
 /* ================= constants ================= */
 const K_ITEMS='wb_resell_items', K_SET='wb_resell_settings', K_META='wb_resell_meta';
+/* 渠道：k=键 n=显示名 full=全称 cls=徽标色类 ab=徽标字 lang=文案语言 url=发布页
+   desc=一句话说明 app=需在手机App粘贴 geo=启用时的地理/运费提醒 defCur=该渠道智能默认币种 */
 const PLATFORMS=[
-  {k:'fb',    n:'Facebook',   full:'Facebook Marketplace', cls:'fb',  ab:'f',  lang:'en', url:'https://www.facebook.com/marketplace/create/item'},
-  {k:'kijiji',n:'Kijiji',     full:'Kijiji',               cls:'kj',  ab:'K',  lang:'en', url:'https://www.kijiji.ca/p-post-ad.html'},
-  {k:'xhs',   n:'小红书',      full:'小红书',                cls:'xhs', ab:'红', lang:'zh', url:'https://creator.xiaohongshu.com/publish/publish?source=official'},
-  {k:'karrot',n:'Karrot',     full:'Karrot 胡萝卜',         cls:'kr',  ab:'🥕', lang:'en', url:'https://ca.karrotmarket.com/'}
+  {k:'fb',     n:'Facebook',  full:'Facebook Marketplace', cls:'fb',  ab:'f',  lang:'en', url:'https://www.facebook.com/marketplace/create/item',
+    desc:'北美最常用的二手市场，英语文案', app:false, geo:'', defCur:''},
+  {k:'kijiji', n:'Kijiji',    full:'Kijiji',               cls:'kj',  ab:'K',  lang:'en', url:'https://www.kijiji.ca/p-post-ad.html',
+    desc:'加拿大本地分类网，以自提为主，英语文案', app:false, geo:'', defCur:''},
+  {k:'xhs',    n:'小红书',     full:'小红书',                cls:'xhs', ab:'红', lang:'zh', url:'https://creator.xiaohongshu.com/publish/publish?source=official',
+    desc:'中文种草社区，需在手机 App 里粘贴发布', app:true, geo:'', defCur:''},
+  {k:'karrot', n:'Karrot',    full:'Karrot 胡萝卜',         cls:'kr',  ab:'萝', lang:'en', url:'https://ca.karrotmarket.com/',
+    desc:'邻里社区二手（北美有站点），英语文案', app:false, geo:'', defCur:''},
+  {k:'xianyu', n:'闲鱼',      full:'闲鱼',                  cls:'xy',  ab:'鱼', lang:'zh', url:'https://www.goofish.com/',
+    desc:'国内二手平台，卖给国内买家，需在手机 App 里粘贴', app:true, geo:'主要面向国内买家，请确认你能发货到国内', defCur:'CNY'},
+  {k:'carousell',n:'Carousell',full:'Carousell',            cls:'cr',  ab:'C',  lang:'en', url:'https://www.carousell.com/',
+    desc:'东南亚二手平台（新加坡/马来/香港等），英语文案', app:false, geo:'面向东南亚买家，请确认你能发货', defCur:'USD'}
 ];
+/* 默认启用的渠道：闲鱼/Carousell 默认不勾选（P0-1） */
+const ENABLED_DEF=['fb','kijiji','xhs','karrot'];
+function byPk(k){return PLATFORMS.find(p=>p.k===k);}
+function enabledPlatforms(){return PLATFORMS.filter(p=>(settings.enabled||ENABLED_DEF).includes(p.k));}
+function curSym(pk){const p=byPk(pk);return CUR_SYM[(p&&p.defCur)||settings.cur]||'$';}
 const COND_EN={'全新未拆':'Brand new, unopened','几乎全新':'Like new','9成新':'Excellent condition','8成新':'Good condition','7成新':'Gently used, fully functional','有明显使用痕迹':'Used — cosmetic wear, works fine'};
+const COND_TAG={'全新未拆':'Brand New','几乎全新':'Like New','9成新':'Excellent','8成新':'Good','7成新':'Gently Used','有明显使用痕迹':'Used'};
 const CAT_EN={'家具':'Furniture','电子产品':'Electronics','家电':'Appliances','厨房用品':'Kitchen','服饰鞋包':'Clothing & Accessories','图书教材':'Books','运动户外':'Sports & Outdoors','母婴':'Baby & Kids','其他':'Other'};
 const CUR_SYM={CAD:'$',USD:'$',CNY:'¥'};
-const DEF_SET={url:'https://api.openai.com/v1',key:'',modelV:'gpt-4o-mini',modelT:'gpt-4o-mini',cur:'CAD',loc:'Waterloo, ON',stale:14,contact:'',bridge:'http://localhost:8891'};
+const DEF_SET={url:'https://api.openai.com/v1',key:'',modelV:'gpt-4o-mini',modelT:'gpt-4o-mini',cur:'CAD',loc:'Waterloo, ON',stale:14,contact:'',bridge:'http://localhost:8891',enabled:['fb','kijiji','xhs','karrot']};
 
 /* ================= AI 服务商预设 ================= */
 /* 选服务商 → 自动填 Base URL + 该家真实模型清单；模型框是「可输入 + 下拉建议」，没有就自己打 */
@@ -661,18 +746,20 @@ const PROVIDERS=[
     vision:['moonshot-v1-8k-vision-preview','moonshot-v1-32k-vision-preview'],
     text:['moonshot-v1-8k','moonshot-v1-32k','moonshot-v1-128k'], note:''},
   {k:'ollama',  n:'Ollama (本机)',       url:'http://localhost:11434/v1',
-    vision:['llava','minicpm-v','qwen2.5vl'],
-    text:['llama3.1','qwen2.5','mistral','deepseek-r1'], note:'Ollama 需先本地跑起 ollama serve，模型名填你本地 pull 的那个'}
+    vision:['qwen2.5vl','llava','minicpm-v','llama3.2-vision'],
+    text:['qwen2.5','llama3.1','gemma3','mistral'],
+    note:'本机跑模型：照片不出这台电脑，不花一分钱，断网也能用。先在命令行跑 ollama serve，再 ollama pull qwen2.5vl（识图）和 qwen2.5（翻译），模型名填你本地实际有的那个。Windows 首次还要先 set OLLAMA_ORIGINS=* 再启动，浏览器才连得上。API Key 这栏留空就行。'}
 ];
 const PROV_CUSTOM={k:'custom',n:'手动输入 (自定义)',url:'',vision:[],text:[],note:''};
 function provByKey(k){return PROVIDERS.find(p=>p.k===k)||PROV_CUSTOM;}
-function provFromUrl(u){u=(u||'').trim();const p=PROVIDERS.find(p=>p.url&&p.url===u);return p?p.k:'custom';}
+function provFromUrl(u){u=(u||'').trim();const p=PROVIDERS.find(p=>p.url&&p.url===u);if(p)return p.k;if(isOllamaUrl(u))return 'ollama';return 'custom';}
 function fillDatalist(id,arr){const dl=$('#'+id);if(!dl)return;dl.replaceChildren();arr.forEach(m=>{const o=document.createElement('option');o.value=m;dl.appendChild(o);});}
 
 /* ================= state ================= */
-let items=[], settings={...DEF_SET}, meta={seeded:false,lastBackupCount:0,onboarded:false};
+let items=[], settings={...DEF_SET}, meta={seeded:false,lastBackupCount:0,onboarded:false,lastBackupAt:'',backupSnoozeAt:''};
 let draftPhotos=[];   // {id, thumb, full}
 let curView='capture', detailId=null;
+let ollamaAvailable=false;   // 本机是否检测到 Ollama 在跑（P0-2：没跑就不暴露该选项）
 
 /* ================= utils ================= */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -704,6 +791,8 @@ function load(){
   try{items=JSON.parse(localStorage.getItem(K_ITEMS)||'[]')}catch(e){items=[]}
   try{settings={...DEF_SET,...JSON.parse(localStorage.getItem(K_SET)||'{}')}}catch(e){settings={...DEF_SET}}
   try{meta={...meta,...JSON.parse(localStorage.getItem(K_META)||'{}')}}catch(e){}
+  // 老数据补齐新增渠道字段：不补的话，加了渠道之后老用户一打开就读到 undefined.state 白屏
+  items.forEach(it=>{it.platforms={...blankPlatforms(),...(it.platforms||{})};});
 }
 function save(){
   try{localStorage.setItem(K_ITEMS,JSON.stringify(items));localStorage.setItem(K_META,JSON.stringify(meta));}
@@ -748,35 +837,63 @@ function contactLine(lang){
   if(!settings.contact) return '';
   return lang==='zh' ? `\n联系：${settings.contact}` : `\nContact: ${settings.contact}`;
 }
+function clipTitle(s,n){s=String(s||'').trim();if(s.length<=n)return s;return s.slice(0,n-1).replace(/[\s—-]+\S*$/,'').trim()+'…';}
 function buildCopy(it,pk){
-  const s=sym(), price=it.price||0;
+  const s=curSym(pk), price=it.price||0;
   const nEn=it.nameEn||it.nameZh, nZh=it.nameZh||it.nameEn;
   const dEn=it.descEn||'', dZh=it.descZh||'';
   const condEn=COND_EN[it.cond]||it.cond, catEn=CAT_EN[it.cat]||it.cat;
+  const condTag=COND_TAG[it.cond]||condEn;
+  const descEn=dEn||nEn, descZh=dZh||nZh;
   if(pk==='fb'){
-    return {title:nEn,
-      text:`Title: ${nEn}\nPrice: ${s}${price}\nCategory: ${catEn}\nCondition: ${condEn}\n\nDescription:\n${dEn}\n\n${it.brand?'Brand: '+it.brand+'\n':''}Pickup: ${it.loc}\nCash or e-Transfer. Serious buyers only — message me and it's yours.${contactLine('en')}`};
+    const hasBrand=it.brand&&nEn.toLowerCase().includes(it.brand.toLowerCase());
+    const title=clipTitle(`${it.brand&&!hasBrand?it.brand+' ':''}${nEn} — ${condTag}`,100);
+    return {title,
+      text:`Title: ${title}\nPrice: ${s}${price}\nCategory: ${catEn}\nCondition: ${condEn}\n\nDescription:\n${descEn}\n\n${it.brand?'Brand: '+it.brand+'\n':''}Pickup: ${it.loc} — I'll help you load it into the car.\nPayment: Cash or e-Transfer at pickup.\n\nFirst person to lock in a pickup time gets it. Send me a message and I'll get right back to you.${contactLine('en')}`};
   }
   if(pk==='kijiji'){
-    return {title:`${nEn} — ${condEn}`,
-      text:`Title: ${nEn} — ${condEn}\nPrice: ${s}${price}\nCategory: ${catEn}\nLocation: ${it.loc}\n\nDescription:\n${dEn}\n\n${it.brand?'Brand: '+it.brand+'\n':''}Pickup only, ${it.loc}. Cash or e-Transfer.\nFeel free to message me with any questions.${contactLine('en')}`};
+    const title=clipTitle(`${nEn} — ${condTag}`,64);
+    return {title,
+      text:`Title: ${title}\nPrice: ${s}${price}\nCategory: ${catEn}\nLocation: ${it.loc}\n\nDescription:\n${descEn}\n\n${it.brand?'Brand: '+it.brand+'\n':''}Condition: ${condEn}\nPickup: Pickup only in ${it.loc} — message me and we'll find a time that works.\nPayment: Cash or e-Transfer at pickup.\n\nQuestions, or want a few more photos? Just message me here, happy to help.${contactLine('en')}`};
   }
   if(pk==='xhs'){
     const tags=['#二手转卖','#'+(it.loc.split(',')[0]||'本地')+'二手','#留学生二手','#'+it.cat,'#低价出'].join(' ');
     return {title:`${nZh} 低价出 · ${it.cond}`,
-      text:`${nZh} 低价出｜${it.cond}\n\n${dZh}\n\n价格：${s}${price}（可小刀）\n${it.brand?'品牌：'+it.brand+'\n':''}成色：${it.cond}\n自提：${it.loc}\n\n有需要的宝子评论或私信我～${contactLine('zh')}\n\n${tags}`};
+      text:`${nZh} 低价出｜${it.cond}\n\n${descZh}\n\n价格：${s}${price}（可小刀）\n${it.brand?'品牌：'+it.brand+'\n':''}成色：${it.cond}\n自提：${it.loc}\n\n有需要的宝子评论或私信我～${contactLine('zh')}\n\n${tags}`};
   }
-  // karrot
+  if(pk==='xianyu'){
+    const s2=curSym(pk);
+    const tags=['#闲鱼','#闲置转让','#'+it.cat,'#低价出','#毕业搬家'].join(' ');
+    return {title:`${nZh} 低价出 · ${it.cond}`,
+      text:`${nZh} 低价出｜${it.cond}\n\n${descZh}\n\n价格：${s2}${price}（可小刀）\n${it.brand?'品牌：'+it.brand+'\n':''}成色：${it.cond}\n发货：${it.loc}（国内地址优先）\n\n有需要的宝子评论或私信我～${contactLine('zh')}\n\n${tags}`};
+  }
+  if(pk==='carousell'){
+    const s2=curSym(pk);
+    return {title:nEn,
+      text:`${nEn}\nPrice: ${s2}${price}\nCondition: ${condEn}\nCategory: ${catEn}\n\n${descEn}\n\nPickup / meet-up around ${it.loc}.\nSerious buyers, just chat me!${contactLine('en')}`};
+  }
+  // karrot（默认兜底）
   return {title:nEn,
-    text:`${nEn}\n${s}${price}\n\n${dEn}\n\nCondition: ${condEn}\nPickup around ${it.loc}\nFirst come first served — send me a chat!${contactLine('en')}`};
+    text:`${nEn}\n${s}${price}\n\n${descEn}\n\nCondition: ${condEn}\nPickup around ${it.loc}\nFirst come first served — send me a chat!${contactLine('en')}`};
 }
 
 /* ================= AI ================= */
-function hasAI(){return !!(settings.key&&settings.url)}
+/* ---- 本机模型（Ollama / LM Studio）支持 ----
+   本机服务跑在自己电脑上，没有也不需要 API Key。这类地址一律放行，不再拿「没填 Key」拦人。
+   正则末尾的 (\/|$) 是必须的：否则 https://localhost.evil.com/v1 会被误判成本机地址。 */
+function isLocalAI(u){return /^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0|\[::1\])(:\d+)?(\/|$)/i.test(String(u||'').trim());}
+/* 是不是 Ollama 默认端口（11434），用于给出更精准的排查指引 */
+function isOllamaUrl(u){return /^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0|\[::1\]):11434(\/|$)/i.test(String(u||'').trim());}
+/* 没配好 AI 时的提示语：本机模式和云端模式说法不一样 */
+function noAIMsg(){return isLocalAI(settings.url)
+  ? '本机模型还没就绪：先跑 ollama serve，再 ollama pull qwen2.5vl'
+  : '还没配 API Key，去设置里填一个';}
+function hasAI(){return !!(settings.url&&(settings.key||isLocalAI(settings.url)))}
 async function callAI(messages,model){
   const r=await fetch(settings.url.replace(/\/+$/,'')+'/chat/completions',{
     method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+settings.key},
+    /* Ollama 不校验 Key，但空 Bearer 会被某些反代/LM Studio 版本判成畸形头，塞个占位串更稳 */
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+(settings.key||'local')},
     body:JSON.stringify({model:model||settings.modelT,messages,temperature:0.3,max_tokens:1200})
   });
   if(!r.ok){const t=await r.text().catch(()=>'');const err=new Error('HTTP '+r.status+' '+(t||'').slice(0,200));err.aiStatus=r.status;err.aiDetail=t;throw err;}
@@ -802,6 +919,31 @@ function aiErr(e){
 '• 服务返回了报错页或登录页\n\n下一步：把 Base URL 改成接口的完整地址（类似 https://xxx/v1），再点「测试连接」。'};
     }
     if(/Failed to fetch|NetworkError|network|TypeError|加载|load/i.test(msg)){
+      if(isLocalAI(settings.url)){
+        const ol=isOllamaUrl(settings.url);
+        return {short: ol?'本机 Ollama 没连上':'本机 AI 服务没连上', long:
+'连不上本机 AI 服务（'+settings.url+'）。\n\n'+
+(ol?'本机模式踩坑就这两种，按顺序排查：\n\n'+
+'① Ollama 根本没跑起来\n'+
+'   开一个命令行窗口，执行：\n'+
+'       ollama serve\n'+
+'   再开一个窗口，把模型拉下来（第一次要等，模型好几个 G）：\n'+
+'       ollama pull qwen2.5vl        识图用\n'+
+'       ollama pull qwen2.5          翻译用\n'+
+'   执行 ollama list 能列出模型名，就算跑起来了。\n\n'+
+'② Ollama 跑起来了，但把浏览器挡在门外（跨域 CORS）\n'+
+'   Ollama 默认只放行本机网页，而本工具是双击打开的本地文件，会被它一律拦掉——\n'+
+'   这种情况下 ollama list 一切正常，浏览器这边却始终连不上。\n'+
+'   Windows：先退出托盘里的 Ollama，然后用命令行启动：\n'+
+'       set OLLAMA_ORIGINS=* && ollama serve\n'+
+'   想一劳永逸：系统「环境变量」里加一条 OLLAMA_ORIGINS=*，再重启 Ollama。\n'+
+'   Mac：launchctl setenv OLLAMA_ORIGINS "*"，然后重启 Ollama。\n\n'
+:'排查顺序：\n'+
+'1. 确认这个本机服务已经启动，端口和上面地址一致\n'+
+'2. 确认它开了跨域（CORS）——本工具是双击打开的本地文件，很多本机服务默认会拦掉\n'+
+'3. LM Studio：在 Server 页把 CORS 开关打开再启动\n\n')+
+'弄完回来再点一次「测试连接」。'};
+      }
       return {short:'连不上这个 AI 地址', long:
 '连不上这个 AI 服务（网络 / 跨域被拦）。\n\n可能是这几种情况：\n'+
 '• Base URL（接口地址）拼错了\n'+
@@ -827,7 +969,14 @@ function aiErr(e){
 '• 确认订阅 / 余额还够用\n'+
 '• 有些平台要在后台单独打开「API 访问」开关\n'+
 '• 换一个你有权限的模型名试试'};
-    case 404: return {short:'地址或模型找不到 (404)', long:
+    case 404:
+      if(isLocalAI(settings.url)) return {short:'本机没有这个模型 (404)', long:
+'本机服务里找不到这个模型 (404)。\n\n多半是模型还没拉下来，或者模型名跟本机的对不上（要一字不差，包括冒号后面的 tag）。\n\n下一步：\n'+
+'    ollama list                  先看看本机到底有哪些模型\n'+
+'    ollama pull qwen2.5vl        没有就拉一个（识图用）\n'+
+'    ollama pull qwen2.5          翻译用\n\n'+
+'然后把设置里的「视觉模型 / 文本模型」改成 ollama list 里显示的名字。'};
+      return {short:'地址或模型找不到 (404)', long:
 '接口或模型不存在 (404)。\n\n可能是：\n'+
 '• Base URL 末尾少了 /v1 之类\n'+
 '• 模型名填错，这个平台根本没有那个模型\n\n下一步：核对 Base URL（以能连通 /chat/completions 为准），模型名换成平台实际有的。'};
@@ -850,7 +999,7 @@ function parseJSON(txt){
 }
 async function aiRecognize(){
   if(!draftPhotos.length){toast('先上传至少一张照片',1);return;}
-  if(!hasAI()){toast('还没配 API Key，去设置里填一个',1);$('#mSettings').classList.add('on');return;}
+  if(!hasAI()){toast(noAIMsg(),1);$('#mSettings').classList.add('on');return;}
   const btn=$('#btnAI'); const old=btn.innerHTML;
   btn.disabled=true; btn.innerHTML='识别中…请稍候';
   try{
@@ -873,7 +1022,7 @@ async function aiRecognize(){
 async function aiTranslate(){
   const zhN=$('#fNameZh').value.trim(), zhD=$('#fDescZh').value.trim();
   if(!zhN&&!zhD){toast('先填中文内容',1);return;}
-  if(!hasAI()){toast('没填 API Key，翻译用不了；英文那栏可以自己手打',1);$('#mSettings').classList.add('on');return;}
+  if(!hasAI()){toast(isLocalAI(settings.url)?noAIMsg():'没填 API Key，翻译用不了；英文那栏可以自己手打',1);$('#mSettings').classList.add('on');return;}
   const b=$('#btnTrans'); const old=b.innerHTML; b.disabled=true; b.textContent='翻译中…';
   try{
     const out=await callAI([{role:'user',content:`把下面二手商品信息翻译成地道的北美二手交易平台英文。严格只输出 JSON，不要解释：
@@ -895,10 +1044,10 @@ function computeToday(){
   items.forEach(it=>{
     if(it.status==='review') r.review.push(it);
     if(it.status==='approved'){
-      const pend=PLATFORMS.filter(p=>it.platforms[p.k].state==='pending').length;
+      const pend=enabledPlatforms().filter(p=>it.platforms[p.k].state==='pending').length;
       if(pend){r.topost+=pend;r.topostItems.push(it);}
     }
-    const f=PLATFORMS.filter(p=>it.platforms[p.k].state==='failed');
+    const f=enabledPlatforms().filter(p=>it.platforms[p.k].state==='failed');
     if(f.length) r.failed.push({it,n:f.length});
     if(it.postedAt&&!it.soldAt&&daysBetween(it.postedAt,today())>=staleDays) r.stale.push(it);
   });
@@ -914,8 +1063,8 @@ function renderToday(){
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>`);
   }
   if(t.review.length){
-    rows.push(`<button class="titem amb" data-go="review"><span class="tdot"></span><span class="tx"><b>${t.review.length} 件等你审核</b>
-      <span class="tsub">${t.review.slice(0,2).map(x=>esc(x.nameZh||x.nameEn)).join('、')}${t.review.length>2?' 等':''} — AI 填好了，确认下就能上架</span></span>
+    rows.push(`<button class="titem amb" data-go="review"><span class="tdot"></span><span class="tx"><b>${t.review.length} 件等你过一眼</b>
+      <span class="tsub">${t.review.slice(0,2).map(x=>esc(x.nameZh||x.nameEn)).join('、')}${t.review.length>2?' 等':''} — AI 都填好了，你看一眼没问题就能发</span></span>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>`);
   }
   if(t.topost){
@@ -960,21 +1109,21 @@ function thumbHTML(it){
 }
 function itemCard(it,mode){
   const s=sym();
-  const posted=PLATFORMS.filter(p=>it.platforms[p.k].state==='posted').length;
-  const failed=PLATFORMS.filter(p=>it.platforms[p.k].state==='failed').length;
-  const sold=PLATFORMS.filter(p=>it.platforms[p.k].state==='sold').length;
+  const posted=enabledPlatforms().filter(p=>it.platforms[p.k].state==='posted').length;
+  const failed=enabledPlatforms().filter(p=>it.platforms[p.k].state==='failed').length;
+  const sold=enabledPlatforms().filter(p=>it.platforms[p.k].state==='sold').length;
   let pills=`<span class="pill">${esc(it.cond)}</span>`;
   if(it.demo) pills+=`<span class="pill b">示例</span>`;
   if(sold) pills+=`<span class="pill b">已售出</span>`;
   else if(failed) pills+=`<span class="pill r">${failed} 个失败</span>`;
-  else if(mode==='track'&&posted===PLATFORMS.length) pills+=`<span class="pill g">全平台已发</span>`;
+  else if(mode==='track'&&posted===enabledPlatforms().length) pills+=`<span class="pill g">全平台已发</span>`;
   const stale=it.postedAt&&!it.soldAt&&daysBetween(it.postedAt,today())>=(+settings.stale||14);
   if(stale) pills+=`<span class="pill a">挂了 ${daysBetween(it.postedAt,today())} 天</span>`;
 
   let acts='';
   if(mode==='review'){
     acts=`<button class="btn xs pri" data-act="approve" data-id="${it.id}">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>审核通过</button>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>没问题，就这样</button>
       <button class="btn xs" data-act="open" data-id="${it.id}">查看 / 编辑</button>
       <button class="btn xs dgr" data-act="del" data-id="${it.id}">删除</button>`;
   }else if(mode==='approved'){
@@ -986,7 +1135,7 @@ function itemCard(it,mode){
     acts+=`<button class="btn xs dgr" data-act="del" data-id="${it.id}">删除</button>`;
   }
 
-  const pgrid = mode==='track' ? `<div class="pgrid">${PLATFORMS.map(p=>{
+  const pgrid = mode==='track' ? `<div class="pgrid">${enabledPlatforms().map(p=>{
     const st=it.platforms[p.k];
     const label={pending:'待发布',posted:'已发布',failed:'失败',sold:'已售出',skip:'跳过'}[st.state];
     return `<div class="pcell" data-s="${st.state}"><div class="pn"><span class="plogo ${p.cls}">${p.ab}</span>${esc(p.n)}</div><div class="ps">${label}</div></div>`;
@@ -1010,7 +1159,7 @@ function wireCards(root){
       if(a==='open'){openDetail(it.id);}
       else if(a==='approve'){it.status='approved';save();toast('已通过，去「上架追踪」发布');render();}
       else if(a==='back'){it.status='review';save();render();}
-      else if(a==='sold'){it.soldAt=today();PLATFORMS.forEach(p=>{if(it.platforms[p.k].state==='posted')it.platforms[p.k].state='sold';});save();toast('恭喜卖出！');render();}
+      else if(a==='sold'){it.soldAt=today();enabledPlatforms().forEach(p=>{if(it.platforms[p.k].state==='posted')it.platforms[p.k].state='sold';});save();toast('恭喜卖出！');render();}
       else if(a==='del'){
         if(confirm('确定删除「'+(it.nameZh||it.nameEn)+'」？此操作不可撤销。')){
           it.photos.forEach(dbDel); items=items.filter(x=>x.id!==it.id); save(); render(); toast('已删除');
@@ -1021,22 +1170,22 @@ function wireCards(root){
 }
 function renderLists(){
   const rev=items.filter(i=>i.status==='review');
-  const app=items.filter(i=>i.status==='approved'&&PLATFORMS.every(p=>i.platforms[p.k].state==='pending'));
-  const trk=items.filter(i=>i.status==='approved'&&PLATFORMS.some(p=>i.platforms[p.k].state!=='pending'))
-             .concat(items.filter(i=>i.status==='approved'&&PLATFORMS.every(p=>i.platforms[p.k].state==='pending')));
+  const app=items.filter(i=>i.status==='approved'&&enabledPlatforms().every(p=>i.platforms[p.k].state==='pending'));
+  const trk=items.filter(i=>i.status==='approved'&&enabledPlatforms().some(p=>i.platforms[p.k].state!=='pending'))
+             .concat(items.filter(i=>i.status==='approved'&&enabledPlatforms().every(p=>i.platforms[p.k].state==='pending')));
   $('#cntReview').textContent=rev.length; $('#cntApproved').textContent=app.length;
 
   const emp=(icon,txt)=>`<div class="empty card">${icon}<p>${txt}</p></div>`;
   const iBox=`<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5" style="margin:0 auto"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>`;
 
-  $('#listReview').innerHTML=rev.length?rev.map(i=>itemCard(i,'review')).join(''):emp(iBox,'没有待审核的物品，去「录入」加一件');
-  $('#listApproved').innerHTML=app.length?app.map(i=>itemCard(i,'approved')).join(''):emp(iBox,'审核通过的物品会出现在这里');
+  $('#listReview').innerHTML=rev.length?rev.map(i=>itemCard(i,'review')).join(''):emp(iBox,'没有等你确认的东西，去「录入」加一件');
+  $('#listApproved').innerHTML=app.length?app.map(i=>itemCard(i,'approved')).join(''):emp(iBox,'确认过的东西会出现在这里，等着发布');
   $('#listTrack').innerHTML=trk.length?trk.map(i=>itemCard(i,'track')).join(''):emp(iBox,'还没有物品进入上架流程');
   [$('#listReview'),$('#listApproved'),$('#listTrack')].forEach(wireCards);
 
   // stats
   let cP=0,cD=0,cF=0,cS=0;
-  items.forEach(it=>PLATFORMS.forEach(p=>{const s=it.platforms[p.k].state;
+  items.forEach(it=>enabledPlatforms().forEach(p=>{const s=it.platforms[p.k].state;
     if(it.status!=='approved')return;
     if(s==='pending')cP++;else if(s==='posted')cD++;else if(s==='failed')cF++;else if(s==='sold')cS++;}));
   $('#statBox').innerHTML=`
@@ -1045,7 +1194,49 @@ function renderLists(){
     <div class="sbox r"><div class="n">${cF}</div><div class="l">发布失败</div></div>
     <div class="sbox b"><div class="n">${cS}</div><div class="l">已成交</div></div>`;
 }
-function render(){renderToday();renderBadges();renderLists();renderStore();}
+function render(){renderBars();renderToday();renderBadges();renderLists();renderStore();}
+
+/* 首屏横幅：示例数据提示 + 备份强引导（数据只在本机，不提醒真的会丢） */
+const SVG_SHIELD='<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>';
+const SVG_SPARK='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg>';
+function renderBars(){
+  const el=$('#bars'); if(!el) return;
+  const html=[];
+  if(items.some(i=>i.demo)){
+    html.push(`<div class="dbar">${SVG_SPARK}<span>下面几件是示例，给你看看长什么样</span>
+      <div class="row"><button class="btn sm ghost" data-bar="clearDemo">清掉示例，我要自己录</button></div></div>`);
+  }
+  const real=items.filter(i=>!i.demo).length;
+  const snoozed=meta.backupSnoozeAt&&(Date.now()-new Date(meta.backupSnoozeAt).getTime())<7*864e5;
+  if(real>=3&&!snoozed){
+    let b='',s='';
+    if(!meta.lastBackupAt){
+      b=`你已经录了 ${real} 件东西，还一次都没备份过`;
+      s='数据只存在这台电脑的浏览器里 —— 清一次缓存、换台电脑就全没了。导出一个文件存着，几秒钟的事。';
+    }else{
+      const days=Math.floor((Date.now()-new Date(meta.lastBackupAt).getTime())/864e5);
+      const added=real-(meta.lastBackupCount||0);
+      if(days>=30&&added>0){ b=`距上次备份已经 ${days} 天，这期间新增了 ${added} 件`; s='顺手再导一份，覆盖掉旧的就行。'; }
+    }
+    if(b) html.push(`<div class="bbar">${SVG_SHIELD}<div class="bb-tx"><b>${esc(b)}</b><span>${esc(s)}</span></div>
+      <div class="row" style="flex:none;gap:6px"><button class="btn sm" data-bar="backup">立即备份</button>
+      <button class="btn sm ghost" data-bar="snooze">以后再说</button></div></div>`);
+  }
+  el.innerHTML=html.join('');
+  el.querySelectorAll('[data-bar]').forEach(b=>{
+    b.onclick=()=>{
+      const a=b.dataset.bar;
+      if(a==='backup'){ doExport(false); }
+      else if(a==='snooze'){ meta.backupSnoozeAt=new Date().toISOString(); save(); renderBars(); toast('7 天后再提醒你'); }
+      else if(a==='clearDemo'){
+        if(!confirm('清掉这几件示例数据？你自己录的东西不受影响。')) return;
+        items.filter(i=>i.demo).forEach(i=>i.photos.forEach(dbDel));
+        items=items.filter(i=>!i.demo);
+        save(); render(); toast('示例已清空');
+      }
+    };
+  });
+}
 function renderStore(){
   let bytes=0; try{bytes=new Blob([localStorage.getItem(K_ITEMS)||'']).size}catch(e){}
   const el=$('#storeInfo'); if(el) el.textContent=`当前 ${items.length} 件物品，文字数据约 ${(bytes/1024).toFixed(0)} KB（上限约 5 MB）。照片存在 IndexedDB，容量充裕。`;
@@ -1085,10 +1276,15 @@ async function openDetail(id){
   const autobar=`<div class="autobar" id="autoBar">
     <div class="ab-h">
       <span class="ab-t">真·一键发布</span>
-      <span class="ab-s" id="abState">检查桥接中…</span>
+      <span class="ab-s" id="abState">检查中…</span>
     </div>
     <div class="ab-pk">
-      ${PLATFORMS.map(p=>`<label class="ab-c"><input type="checkbox" data-pub="${p.k}" ${it.platforms[p.k].state==='posted'||it.platforms[p.k].state==='sold'?'':'checked'}><span class="plogo ${p.cls}">${p.ab}</span>${esc(p.n)}</label>`).join('')}
+      ${enabledPlatforms().map(p=>{
+        // 只在手机 App 里能发的渠道（小红书/闲鱼），自动发布助手帮不上忙，直接禁用勾选，
+        // 免得用户勾了之后收到一条看不懂的失败
+        const done=it.platforms[p.k].state==='posted'||it.platforms[p.k].state==='sold';
+        return `<label class="ab-c"${p.app?' title="这个平台只能在手机 App 里发，请用下面的「复制文案」"':' title="'+esc(p.desc)+'"'}><input type="checkbox" data-pub="${p.k}" ${p.app?'disabled':(done?'':'checked')}><span class="plogo ${p.cls}">${p.ab}</span>${esc(p.n)}${p.app?'<span class="muted" style="font-size:11px">（手动）</span>':''}</label>`;
+      }).join('')}
     </div>
     <div class="row">
       <button class="btn sm pri" id="btnPubAll" disabled>发布选中平台</button>
@@ -1098,16 +1294,17 @@ async function openDetail(id){
   </div>`;
 
   const posting=it.status==='approved'?`<div class="card pad">
-    <div class="sec-h" style="margin-bottom:12px"><h2>四平台发布</h2><div class="sp" style="flex:1"></div>
-      <span class="muted">桥接开着就全自动，没开就复制跳转</span></div>
+    <div class="sec-h" style="margin-bottom:12px"><h2>多平台发布</h2><div class="sp" style="flex:1"></div>
+      <span class="muted">自动发布助手开着就全自动，没开就复制跳转</span></div>
     ${autobar}
-    ${PLATFORMS.map(p=>{
+    ${enabledPlatforms().map(p=>{
       const st=it.platforms[p.k], c=buildCopy(it,p.k);
       const label={pending:'待发布',posted:'已发布',failed:'失败',sold:'已售出',skip:'跳过'}[st.state];
       const pcls={pending:'',posted:'g',failed:'r',sold:'b',skip:''}[st.state];
       return `<div class="cblock">
         <div class="cb-h"><span class="nm"><span class="plogo ${p.cls}">${p.ab}</span>${esc(p.full)}</span>
           <span class="pill ${pcls}">${label}</span></div>
+        <div class="cb-desc">${esc(p.desc)}${p.app?' · 需在手机 App 里粘贴':''} ${p.geo?('· '+esc(p.geo)):''}</div>
         <div class="cb-b">${esc(c.text)}</div>
         <div class="cb-f">
           <button class="btn xs pri" data-cp="${p.k}">
@@ -1120,11 +1317,11 @@ async function openDetail(id){
         </div>
       </div>`;
     }).join('')}
-  </div>`:`<div class="card pad"><p class="muted" style="margin:0">这件还在审核中。审核通过后，这里会出现四个平台的文案和一键发布按钮。</p></div>`;
+  </div>`:`<div class="card pad"><p class="muted" style="margin:0">这件你还没确认。确认之后，这里会出现各平台的文案和一键发布按钮。</p></div>`;
 
   $('#dBody').innerHTML=editable+photos+posting;
   $('#dFoot').innerHTML=it.status==='review'
-    ? `<button class="btn" id="dSave">保存修改</button><button class="btn pri" id="dApprove">审核通过</button>`
+    ? `<button class="btn" id="dSave">保存修改</button><button class="btn pri" id="dApprove">没问题，就这样</button>`
     : `<button class="btn" id="dSave">保存修改</button><button class="btn" id="dBack">打回修改</button>`;
 
   $('#mDetail').classList.add('on');
@@ -1148,7 +1345,7 @@ async function openDetail(id){
   if($('#dBack')) $('#dBack').onclick=()=>{collect();it.status='review';save();$('#mDetail').classList.remove('on');go('review');render();};
 
   $('#dTrans').onclick=async()=>{
-    if(!hasAI()){toast('没配 API Key，去设置里填',1);return;}
+    if(!hasAI()){toast(noAIMsg(),1);return;}
     const b=$('#dTrans');b.disabled=true;b.textContent='翻译中…';
     try{
       const out=await callAI([{role:'user',content:`把下面二手商品信息翻译成地道的北美二手交易平台英文。严格只输出 JSON：\n{"nameEn":"...","descEn":"..."}\n物品名：${$('#dNameZh').value}\n描述：${$('#dDescZh').value}`}],settings.modelT);
@@ -1213,14 +1410,14 @@ async function checkBridge(quiet){
     const j=await bridgeFetch('/health',{},4000);
     bridgeOnline=!!j.ok;
     if(dot){dot.className=bridgeOnline?'on':'off';}
-    if($('#btnBridge')) $('#btnBridge').title=bridgeOnline?'桥接在线 — 可以真·一键发布':'桥接离线';
-    if(!quiet) toast(bridgeOnline?'桥接在线，可以真·一键发布':'桥接返回异常',bridgeOnline?0:1);
+    if($('#btnBridge')) $('#btnBridge').title=bridgeOnline?'自动发布助手在线 — 可以真·一键发布':'自动发布助手离线';
+    if(!quiet) toast(bridgeOnline?'自动发布助手在线，可以真·一键发布':'自动发布助手返回异常',bridgeOnline?0:1);
     return j;
   }catch(e){
     bridgeOnline=false;
     if(dot) dot.className='off';
-    if($('#btnBridge')) $('#btnBridge').title='桥接离线 — 先运行 start-bridge.bat';
-    if(!quiet) toast('桥接没连上：先运行 start-bridge.bat',1);
+    if($('#btnBridge')) $('#btnBridge').title='自动发布助手离线 — 先运行 start-bridge.bat';
+    if(!quiet) toast('自动发布助手没连上：先运行 start-bridge.bat',1);
     return null;
   }
 }
@@ -1228,8 +1425,8 @@ async function checkBridge(quiet){
 function syncAutoBar(){
   const s=$('#abState'), b=$('#btnPubAll');
   if(!s||!b) return;
-  if(bridgeOnline){ s.textContent='桥接在线'; s.className='ab-s on'; b.disabled=false; }
-  else { s.textContent='桥接离线 — 用下面的复制跳转'; s.className='ab-s off'; b.disabled=true; }
+  if(bridgeOnline){ s.textContent='自动发布助手在线'; s.className='ab-s on'; b.disabled=false; }
+  else { s.textContent='自动发布助手离线 — 用下面的复制跳转'; s.className='ab-s off'; b.disabled=true; }
 }
 
 async function publishViaBridge(it,collect){
@@ -1267,7 +1464,7 @@ async function publishViaBridge(it,collect){
     const R=j.results||{};
     let ok=0,fail=0;
     picked.forEach(k=>{
-      const r=R[k]||{status:'failed',message:'桥接没返回结果'};
+      const r=R[k]||{status:'failed',message:'自动发布助手没返回结果'};
       const line=logEl.querySelector(`[data-lg="${k}"] span`);
       const good=r.status==='posted';
       if(good){ok++}else{fail++}
@@ -1283,11 +1480,11 @@ async function publishViaBridge(it,collect){
     });
     save(); render();
     msg.textContent=`完成：成功 ${ok} 个，失败 ${fail} 个。`;
-    toast(fail?`发布完成：成功 ${ok}，失败 ${fail}，看下面原因`:`四平台发布成功 ${ok} 个 🎉`,fail?1:0);
+    toast(fail?`发布完成：成功 ${ok}，失败 ${fail}，看下面原因`:`发布成功 ${ok} 个`,fail?1:0);
   }catch(e){
-    msg.textContent='桥接调用失败：'+e.message;
+    msg.textContent='自动发布助手调用失败：'+e.message;
     logEl.querySelectorAll('.l span').forEach(s=>{s.className='er';s.textContent='未执行'});
-    toast('桥接调用失败：'+e.message.slice(0,60),1);
+    toast('自动发布助手调用失败：'+e.message.slice(0,60),1);
   }finally{
     btn.disabled=false; btn.textContent='发布选中平台';
   }
@@ -1310,7 +1507,7 @@ function buildReport(){
   const failLines=[],pendLines=[];
   items.filter(i=>i.status==='approved').forEach(it=>{
     const nm=it.nameZh||it.nameEn;
-    PLATFORMS.forEach(p=>{
+    enabledPlatforms().forEach(p=>{
       const st=it.platforms[p.k];
       if(st.state==='posted')ok++;
       else if(st.state==='sold'){sold++;}
@@ -1356,7 +1553,10 @@ async function doExport(withPhotos){
   a.download=`二手转卖台备份_${today()}${withPhotos?'_含图':'_仅文字'}.json`;
   document.body.appendChild(a);a.click();
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},600);
-  meta.lastBackupCount=items.length; save();
+  meta.lastBackupCount=items.length;
+  meta.lastBackupAt=new Date().toISOString();
+  meta.backupSnoozeAt='';        // 备份过了，把「以后再说」的静默期清掉
+  save(); renderBars();
   toast('备份已下载');
 }
 function doImport(file){
@@ -1400,6 +1600,8 @@ function seed(){
   a.platforms.kijiji={state:'failed',at:ago(7),note:'图片上传超时'};
   a.platforms.xhs={state:'posted',at:ago(7),note:''};
   a.platforms.karrot={state:'pending',at:'',note:''};
+  a.platforms.xianyu={state:'posted',at:ago(6),note:''};
+  a.platforms.carousell={state:'pending',at:'',note:''};
 
   const b=mk({nameZh:'罗技 MX Master 3 无线鼠标',nameEn:'Logitech MX Master 3 Wireless Mouse',brand:'Logitech',cat:'电子产品',cond:'9成新',price:65,
     descZh:'原装盒子和 USB 接收器都在，侧边滚轮和按键全部正常，电池健康。换成 3S 了所以出掉。',
@@ -1446,9 +1648,12 @@ function renderDraft(){
     `<div class="th"><img src="${p.thumb}" alt=""><span class="no">${i+1}</span>
       <button class="del" data-rm="${p.id}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>`).join('');
   $('#thumbs').querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{draftPhotos=draftPhotos.filter(p=>p.id!==b.dataset.rm);renderDraft();});
+  const localAI = hasAI() && isLocalAI(settings.url);
   $('#aiHint').textContent = hasAI()
-    ? (draftPhotos.length? `已选 ${draftPhotos.length} 张，AI 会读前 4 张来识别` : 'AI 已就绪，上传照片后点识别')
-    : '还没填 AI Key。不填也完全能用 —— 直接点下面的「手动填写」，自己敲物品名和价格就行。想让 AI 帮你认图，去右上角「设置」填一个 Key。';
+    ? (draftPhotos.length
+        ? `已选 ${draftPhotos.length} 张，AI 会读前 4 张来识别` + (localAI?'（本机模型，照片不出这台电脑）':'')
+        : (localAI?'本机模型已就绪，上传照片后点识别 —— 照片不出这台电脑，也不花钱':'AI 已就绪，上传照片后点识别'))
+    : '还没配 AI。不填也完全能用 —— 直接点下面的「手动填写」，自己敲物品名和价格就行。想让 AI 帮你认图，去右上角「设置」填个 Key，或者选「Ollama (本机)」用自己电脑上的模型（不要 Key、不花钱）。';
 }
 function resetForm(){
   ['fNameZh','fNameEn','fBrand','fPrice','fDescZh','fDescEn'].forEach(i=>$('#'+i).value='');
@@ -1468,12 +1673,33 @@ async function saveDraft(){
   for(const p of draftPhotos) await dbPut(p.id,p.full);
   items.unshift(it); save();
   resetForm(); render(); go('review');
-  toast('已保存到待审核');
+  toast('存好了，去「等你确认」过一眼');
   if(items.length>=30&&items.length-meta.lastBackupCount>=30)
     setTimeout(()=>toast('数据已积累 '+items.length+' 条，建议导出一次备份'),2800);
 }
 
 /* ================= settings ================= */
+function renderChToggles(){
+  const wrap=$('#chToggles'); if(!wrap)return;
+  const en=settings.enabled||ENABLED_DEF;
+  wrap.innerHTML=PLATFORMS.map(p=>{
+    const on=en.includes(p.k);
+    return `<label class="ch-card${on?' on':''}">
+      <input type="checkbox" data-ch="${p.k}" ${on?'checked':''}>
+      <span class="ch-n"><span class="plogo ${p.cls}">${p.ab}</span>${esc(p.n)}</span>
+      <span class="ch-d">${esc(p.desc)}</span>
+    </label>`;
+  }).join('');
+  const cnt=$('#cntCh'); if(cnt) cnt.textContent=en.length;
+  wrap.querySelectorAll('[data-ch]').forEach(c=>c.onchange=()=>{
+    const k=c.dataset.ch, p=byPk(k);
+    if(c.checked && p.geo && !confirm(`启用「${p.n}」？\n\n${p.geo}\n\n确定你能发货到该地区再启用。`)){c.checked=false;return;}
+    const s=new Set(settings.enabled||ENABLED_DEF);
+    c.checked?s.add(k):s.delete(k);
+    settings.enabled=[...s];
+    renderChToggles(); render();
+  });
+}
 function openSettings(){
   $('#sUrl').value=settings.url; $('#sKey').value=settings.key;
   $('#sModelV').value=settings.modelV; $('#sModelT').value=settings.modelT;
@@ -1482,7 +1708,9 @@ function openSettings(){
   $('#sStale').value=settings.stale; $('#sContact').value=settings.contact;
   $('#sBridge').value=settings.bridge||DEF_SET.bridge;
   $('#testMsg').textContent=''; $('#bridgeCheckMsg').textContent=''; $('#loginStatusMsg').textContent='';
+  renderChToggles();
   renderStore();
+  detectOllama().then(()=>{initProvUI();if(settings.key)syncProv('s');});
   $('#mSettings').classList.add('on');
 }
 function applySettings(){
@@ -1517,11 +1745,12 @@ function openWizard(){
   $('#wCur').value=settings.cur;
   $('#wStale').value=settings.stale||14;
   $('#wContact').value=settings.contact||'';
-  $('#wUrl').value=settings.key?settings.url:'';
+  const cfg=hasAI();   // 有 Key 或本机地址，都算已配置过，重跑向导时不该清空
+  $('#wUrl').value=cfg?settings.url:'';
   $('#wKey').value=settings.key||'';
-  $('#wModelV').value=settings.key?settings.modelV:'';
-  $('#wModelT').value=settings.key?settings.modelT:'';
-  if(settings.key){ syncProv('w'); } else { const sp=$('#wProv'); if(sp) sp.value='openai'; onProvChange('w'); }
+  $('#wModelV').value=cfg?settings.modelV:'';
+  $('#wModelT').value=cfg?settings.modelT:'';
+  if(cfg){ syncProv('w'); } else { const sp=$('#wProv'); if(sp) sp.value='deepseek'; onProvChange('w'); }
   $('#wTestMsg').textContent='';
   $('#wKeepDemo').checked=items.some(i=>i.demo);
   $('#wKeepDemo').closest('label').style.display=items.some(i=>i.demo)?'flex':'none';
@@ -1535,9 +1764,12 @@ function wizCommit(){
   settings.stale=+$('#wStale').value||14;
   settings.contact=$('#wContact').value.trim();
   const k=$('#wKey').value.trim();
-  if(k){
+  const wu=$('#wUrl').value.trim();
+  // 有 Key，或者填的是本机地址（Ollama/LM Studio 不需要 Key）—— 两种都算「配好了 AI」
+  // 不这么写的话，本机用户按提示留空 Key，在向导里填的地址和模型名会被静默丢掉
+  if(k||isLocalAI(wu)){
     settings.key=k;
-    settings.url=$('#wUrl').value.trim()||DEF_SET.url;
+    settings.url=wu||DEF_SET.url;
     settings.modelV=$('#wModelV').value.trim()||DEF_SET.modelV;
     settings.modelT=$('#wModelT').value.trim()||DEF_SET.modelT;
   }
@@ -1554,7 +1786,7 @@ function wizCommit(){
   $('#fLoc').value=settings.loc;
   renderDraft(); render();
   $('#mWizard').classList.remove('on');
-  toast(k?'设置完成，AI 已就绪':'设置完成，开始录第一件东西吧');
+  toast(hasAI()?'设置完成，AI 已就绪':'设置完成，开始录第一件东西吧');
 }
 
 function bindWizard(){
@@ -1572,10 +1804,15 @@ function bindWizard(){
   $('#wTest').onclick=async()=>{
     const m=$('#wTestMsg');
     const k=$('#wKey').value.trim();
-    if(!k){m.textContent='还没填 Key';m.style.color='#c27803';return;}
+    const wurl=$('#wUrl').value.trim()||DEF_SET.url;
+    // 本机地址不要求 Key —— 原来这里一律拦掉，把 Ollama 用户直接挡死在测试按钮前
+    if(!k && !isLocalAI(wurl)){
+      m.textContent='还没填 Key。\n\n如果你用的是本机 Ollama / LM Studio，把上面「服务商」选成「Ollama (本机)」，Key 这栏可以留空。';
+      m.style.color='#c27803'; return;
+    }
     m.textContent='测试中…'; m.style.color='';
     const bak={url:settings.url,key:settings.key,modelT:settings.modelT};
-    settings.url=$('#wUrl').value.trim()||DEF_SET.url;
+    settings.url=wurl;
     settings.key=k;
     settings.modelT=$('#wModelT').value.trim()||DEF_SET.modelT;
     try{
@@ -1590,12 +1827,57 @@ function bindWizard(){
 
 /* ================= bind ================= */
 /* 服务商预设 UI：选服务商 → 自动填 URL + 该家模型；模型框可输入也可从下拉选 */
+/* 探测本机 Ollama 是否在运行：只在检测到时才把 Ollama 暴露给用户，避免误选假死（P0-2 / P1-4） */
+async function detectOllama(){
+  try{
+    const c=new AbortController(), t=setTimeout(()=>c.abort(),1500);
+    const r=await fetch('http://localhost:11434/api/tags',{signal:c.signal});
+    clearTimeout(t);
+    ollamaAvailable=r.ok;
+  }catch(e){ollamaAvailable=false;}
+  return ollamaAvailable;
+}
 function initProvUI(){
   ['s','w'].forEach(p=>{
     const sel=$('#'+p+'Prov'); if(!sel)return;
-    sel.innerHTML=PROVIDERS.map(p2=>'<option value="'+p2.k+'">'+esc(p2.n)+'</option>').join('')+'<option value="custom">手动输入 (自定义)</option>';
+    const cur=sel.value;
+    sel.innerHTML=PROVIDERS.map(p2=>{
+      let tail='';
+      if(p2.k==='deepseek') tail='（推荐）';
+      // Ollama 不隐藏、只标状态：藏起来的话，装了 Ollama 但被跨域拦住的用户
+      // 就永远看不到排查指引，反而更难自救
+      if(p2.k==='ollama') tail=ollamaAvailable?' · 已检测到':' · 未检测到';
+      return '<option value="'+p2.k+'">'+esc(p2.n)+tail+'</option>';
+    }).join('')+'<option value="custom">手动输入 (自定义)</option>';
+    if(cur) sel.value=cur;
     sel.onchange=()=>onProvChange(p);
   });
+}
+/* 服务商提示语。Ollama 没探测到时，把「怎么让它跑起来」直接写在这里 */
+function provNoteText(prov){
+  if(prov.k==='ollama' && !ollamaAvailable){
+    return '没在这台电脑上探测到 Ollama。两种可能：\n'+
+      '① 还没启动 —— 命令行执行 ollama serve，再 ollama pull qwen2.5vl 拉模型；\n'+
+      '② 已经启动了，但没放行本工具 —— 本工具是双击打开的本地文件，会被 Ollama 的跨域策略拦掉。\n'+
+      '   Windows 改用：set OLLAMA_ORIGINS=* && ollama serve\n'+
+      '   Mac 改用：launchctl setenv OLLAMA_ORIGINS "*" 后重启 Ollama。\n'+
+      '弄好后重开这个页面，这里会变成「已检测到」。';
+  }
+  return prov.note?'提示：'+prov.note:'';
+}
+function applyProvNote(p,prov){
+  const note=$('#'+p+'ProvNote'); if(!note)return;
+  const t=provNoteText(prov);
+  if(t){ note.textContent=t; note.style.whiteSpace='pre-wrap'; note.style.display=''; }
+  else { note.style.display='none'; }
+  if(p==='s') syncLocalBtn();
+}
+/* 「看看本机有哪些模型」只对本机地址有意义，云端服务商不该看到这个按钮 */
+function syncLocalBtn(){
+  const b=$('#btnLocalModels'), u=$('#sUrl'); if(!b||!u)return;
+  const on=isLocalAI(u.value);
+  b.style.display=on?'':'none';
+  if(!on) $('#localModelsMsg').textContent='';
 }
 function onProvChange(p){
   const sel=$('#'+p+'Prov'); if(!sel)return;
@@ -1610,8 +1892,7 @@ function onProvChange(p){
   }else{
     mv.value=''; mt.value='';
   }
-  const note=$('#'+p+'ProvNote');
-  if(prov.note){ note.textContent='提示：'+prov.note; note.style.display=''; } else { note.style.display='none'; }
+  applyProvNote(p,prov);
 }
 function syncProv(p){
   const pk=provFromUrl($('#'+p+'Url').value);
@@ -1619,8 +1900,7 @@ function syncProv(p){
   const prov=provByKey(pk);
   fillDatalist(p+'ModelsV', prov.vision);
   fillDatalist(p+'ModelsT', prov.text);
-  const note=$('#'+p+'ProvNote');
-  if(prov.note){ note.textContent='提示：'+prov.note; note.style.display=''; } else { note.style.display='none'; }
+  applyProvNote(p,prov);
 }
 
 function bind(){
@@ -1662,7 +1942,7 @@ function bind(){
     }
   };
   $('#btnClearAll').onclick=()=>{
-    if(!confirm(`⚠️ 将删除全部 ${items.length} 件物品和所有照片，无法撤销！\n\n强烈建议先点「导出 JSON 备份」。\n\n确定继续吗？`))return;
+    if(!confirm(`即将删除全部 ${items.length} 件物品和所有照片，无法撤销！\n\n强烈建议先点「导出 JSON 备份」。\n\n确定继续吗？`))return;
     if(!confirm('最后确认一次：真的要清空全部数据吗？'))return;
     items.forEach(i=>i.photos.forEach(dbDel));
     items=[]; meta.seeded=true; save(); render(); toast('已清空');
@@ -1671,18 +1951,49 @@ function bind(){
   $('#btnReport').onclick=showReport;
   $('#btnRetryAll').onclick=()=>{
     let n=0;
-    items.forEach(it=>PLATFORMS.forEach(p=>{if(it.platforms[p.k].state==='failed'){it.platforms[p.k].state='pending';n++}}));
+    items.forEach(it=>enabledPlatforms().forEach(p=>{if(it.platforms[p.k].state==='failed'){it.platforms[p.k].state='pending';n++}}));
     if(!n){toast('没有失败项');return}
     save(); render(); toast(n+' 个失败项已重置为待发布');
   };
 
   $('#btnTest').onclick=async()=>{
     applySettingsSilent();
-    const m=$('#testMsg'); m.textContent='测试中…'; m.style.color='';
+    const m=$('#testMsg'); m.textContent=''; m.style.color='';
+    // 空 Key 提前拦住，别让它白跑一个 401 —— 但本机地址不需要 Key，要放行
+    if(!settings.key && !isLocalAI(settings.url)){
+      m.textContent='还没填 API Key。\n\n如果你用的是本机 Ollama / LM Studio，把上面「服务商」选成「Ollama (本机)」，Key 这栏可以留空。';
+      m.style.color='#c27803'; return;
+    }
+    m.textContent='测试中…';
     try{
       const r=await callAI([{role:'user',content:'回复两个字：正常'}],settings.modelT);
       m.textContent='连接正常：'+r.trim().slice(0,20); m.style.color='#057a55';
     }catch(e){const er=aiErr(e);m.textContent=er.long;m.style.color='#e02424';}
+  };
+  $('#sUrl').addEventListener('input',syncLocalBtn);
+  /* 列出本机 / 当前服务已有的模型。走 OpenAI 兼容的 /models，Ollama 和 LM Studio 都支持。
+     纯展示用：查不到也不影响任何功能，只是少一条参考信息。 */
+  $('#btnLocalModels').onclick=async()=>{
+    const m=$('#localModelsMsg');
+    const base=($('#sUrl').value.trim()||DEF_SET.url).replace(/\/+$/,'');
+    m.textContent='正在问它…'; m.style.color='';
+    try{
+      const ctl=new AbortController(); const tm=setTimeout(()=>ctl.abort(),8000);
+      const r=await fetch(base+'/models',{headers:{'Authorization':'Bearer '+($('#sKey').value.trim()||'local')},signal:ctl.signal});
+      clearTimeout(tm);
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      const j=await r.json();
+      const names=((j&&j.data)||[]).map(x=>x.id).filter(Boolean);
+      if(!names.length){ m.textContent='连上了，但它没报告任何模型。手动把模型名填进上面两个框即可。'; m.style.color='#c27803'; return; }
+      m.textContent='可用模型 '+names.length+' 个：'+names.slice(0,12).join('、')+(names.length>12?' …':'')
+        +'\n把其中一个名字填进上面「视觉模型 / 文本模型」就行。';
+      m.style.color='#057a55';
+    }catch(e){
+      m.textContent=isLocalAI(base)
+        ? '连不上本机服务。检查两件事：\n1) 命令行里 ollama serve 是否在跑；\n2) 是否用 OLLAMA_ORIGINS=* 启动的（双击打开的网页需要它，否则会被浏览器拦掉）。'
+        : '这个服务没有返回模型列表（很多云厂商不开放该接口）。不影响使用，手动填模型名即可。';
+      m.style.color='#c27803';
+    }
   };
   function applySettingsSilent(){
     settings.url=$('#sUrl').value.trim()||DEF_SET.url;
@@ -1725,7 +2036,7 @@ function bind(){
     try{
       const j=await bridgeFetch('/login-status',{},1000*60);
       m.innerHTML=(j.results||[]).map(r=>{
-        const p=PLATFORMS.find(x=>x.k===r.platform);
+        const p=byPk(r.platform);
         return `${esc(p?p.n:r.platform)}：<b style="color:${r.loggedIn?'#057a55':'#e02424'}">${r.loggedIn?'已登录':'未登录'}</b>${r.note?' <span class="muted">('+esc(r.note)+')</span>':''}`;
       }).join(' &nbsp;|&nbsp; ');
     }catch(e){ m.textContent='检查失败：'+e.message; m.style.color='#e02424'; }
@@ -1741,13 +2052,21 @@ load(); seed();
 if(!settings.loc) settings.loc=DEF_SET.loc;
 $('#curHint').textContent=settings.cur;
 $('#fLoc').value=settings.loc;
-bind(); renderDraft(); render();
-checkBridge(true);
-if(!meta.onboarded){
-  openWizard();
-}else if(items.length>=30&&items.length-meta.lastBackupCount>=30){
-  setTimeout(()=>toast('数据已积累 '+items.length+' 条，建议导出一次备份'),1800);
-}
+(async()=>{
+  bind(); renderDraft(); render();
+  checkBridge(true);
+  if(!meta.onboarded){
+    openWizard();
+  }else if(items.length>=30&&items.length-meta.lastBackupCount>=30){
+    setTimeout(()=>toast('数据已积累 '+items.length+' 条，建议导出一次备份'),1800);
+  }
+  // Ollama 探活不挡首屏：没装 Ollama 的人要白等 1.5 秒才见页面，不值当。
+  // 探完只回来刷服务商标签和提示，选中值 initProvUI 内部会保留。
+  detectOllama().then(()=>{
+    initProvUI();
+    ['s','w'].forEach(p=>{ const sel=$('#'+p+'Prov'); if(sel) applyProvNote(p,provByKey(sel.value)); });
+  });
+})();
 </script>
 </body>
 </html>

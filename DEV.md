@@ -15,9 +15,9 @@
 | 项目 | 内容 |
 |------|------|
 | **名称** | 二手转卖工作台（Secondhand Resale Workbench） |
-| **解决的问题** | 把一件闲置物品同时挂到 4 个二手平台，需要重复填 4 次表单、写 4 种风格的文案、还要记住哪个平台发成功了。全过程约 15-20 分钟/件。 |
+| **解决的问题** | 把一件闲置物品同时挂到 6 个二手平台，需要重复填 6 次表单、写 6 种风格的文案、还要记住哪个平台发成功了。全过程约 15-20 分钟/件。 |
 | **目标** | 压缩到 1-2 分钟/件，并且**不丢失哪件在哪个平台是什么状态**这个信息。 |
-| **目标平台** | Facebook Marketplace、Kijiji、小红书、Karrot（加拿大胡萝卜） |
+| **目标平台** | Facebook Marketplace、Kijiji、小红书、Karrot、闲鱼、Carousell |
 | **目标用户** | 北美留学生 / 搬家清货的个人卖家。**非技术背景**。 |
 | **形态** | 单文件 HTML（前端） + 可选的本地 Node 桥接服务（自动化） |
 | **部署** | 前端双击即用，零安装；桥接服务需要 Node + Playwright |
@@ -33,7 +33,7 @@
 
 ## 2. 技术栈（精确清单）
 
-### 2.1 前端 `outputs/二手转卖工作台.html`
+### 2.1 前端 `index.html`
 
 | 层 | 选型 | 版本/约束 | 为什么是它 |
 |----|------|-----------|-----------|
@@ -41,9 +41,9 @@
 | 样式 | 原生 CSS3 + CSS 变量 | 内联 `<style>` | 无 Tailwind/Bootstrap。变量集中在 `:root` 便于换肤 |
 | 逻辑 | 原生 ES2020 JavaScript | 内联 `<script>`，~47 K 字符，`'use strict'` | **无 React/Vue/jQuery**。见 ADR-002 |
 | 结构化数据存储 | `localStorage` | key 前缀 `wb_resell_*` | 同步 API、够用（物品元数据是纯文本） |
-| 图片存储 | `IndexedDB` | DB `resell_photos` / store `photos` | localStorage 只有 ~5 MB，装不下图片。见 ADR-003 |
+| 图片存储 | `IndexedDB` | DB `wb_resell_db` / store `photos` | localStorage 只有 ~5 MB，装不下图片。见 ADR-003 |
 | 图片压缩 | Canvas 2D `drawImage` + `toDataURL` | 主图 1024px / JPEG q=0.78；缩略图 180px | 纯浏览器端，不上传服务器 |
-| 图标 | 内联 SVG `<path>` | 全部手写 | **严禁 emoji 当图标**（跨平台渲染不一致）。唯一例外：Karrot 的 🥕 是品牌标识 |
+| 图标 | 内联 SVG `<path>` | 全部手写 | **严禁 emoji 当图标**（跨平台渲染不一致）；Karrot 用萝卜 SVG 而非 🥕 |
 | 图表 | 内联 SVG + DOM | 手写 | 不引 Chart.js/D3 |
 | 字体 | 系统字体栈 | `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif` | 不下载字体文件 |
 | AI 调用 | `fetch` → OpenAI 兼容 `/chat/completions` | 用户自带 Base URL + Key | 见 §6 |
@@ -98,7 +98,7 @@ graph TB
             V2["审核视图<br/>人工确认（不可跳过）"]
             V3["追踪视图<br/>状态 / 战报"]
             ST[("localStorage<br/>wb_resell_items<br/>wb_resell_settings<br/>wb_resell_meta")]
-            IDB[("IndexedDB<br/>resell_photos<br/>压缩后的图片")]
+            IDB[("IndexedDB<br/>wb_resell_db<br/>压缩后的图片")]
             V1 --> ST
             V2 --> ST
             V3 --> ST
@@ -293,6 +293,18 @@ sequenceDiagram
 - **AI 永远是可选的**：没配 Key 时所有字段都能手填，主流程不受影响。这是刻意的 —— AI 是加速器，不是必需品。
 - **隐私**：Key 只存在浏览器 localStorage，从不发给桥接服务或任何第三方。
 
+### 6.1 本机 AI（Ollama / LM Studio）：免 Key、照片不出门
+
+`isLocalAI(url)` 用正则判断地址是否指向本机（`localhost` / `127.0.0.1` / `0.0.0.0` / `[::1]`，末尾 `(\/$|)` 锚定防 `localhost.evil.com` 钓鱼）。命中即视为「本机模式」：
+
+- **`hasAI()` 返回 true 且不要求 Key**（`callAI` 发 `Authorization: Bearer local`）。
+- 服务商选 Ollama 时，默认填 `http://localhost:11434/v1`，视觉模型 `qwen2.5vl`、文本模型 `qwen2.5`。
+- `aiErr()` 对**本机地址**单独分支：网络错误提示 `OLLAMA_ORIGINS=*` 跨域排查，404 提示 `ollama pull <模型>`。
+
+> **CORS 致命坑（真实踩过）**：双击本地 HTML 打开时页面 `origin` 是 `file://`、Origin 头为 `null`，不在 Ollama 白名单（`localhost/127.0.0.1/0.0.0.0`），被 403；现象是 `curl` 通但浏览器 `Failed to fetch`。
+> 解决：`set OLLAMA_ORIGINS=* && ollama serve`（Mac/Linux 同理设环境变量后再启动）。这是文档必须写清的用户痛点。
+
+
 ---
 
 ## 7. 数据模型
@@ -354,7 +366,7 @@ pending ──发布成功──> posted ──标记成交──> sold
 
 ### 7.2 IndexedDB
 
-`resell_photos` / object store `photos` / 主键 `id`：`{id, dataUrl}`
+`wb_resell_db` / object store `photos` / 主键 `id`：`{id, dataUrl}`
 存 1024px JPEG。删除物品时同步 `dbDel()` 每张图，避免孤儿数据。
 
 ### 7.3 导出格式
@@ -376,17 +388,17 @@ pending ──发布成功──> posted ──标记成交──> sold
 | `indexeddb` | `dbPut/dbGet/dbDel/dbAll` | Promise 化封装，失败静默返回 null |
 | `storage` | `load/save/saveSet` | 配额溢出时 toast 提示导出 |
 | `photos` | `compress`、`addFiles` | Canvas 压缩 |
-| `copy generator` | `buildCopy(it, pk)` | **四平台文案差异化的唯一来源**，见 §8.1 |
+| `copy generator` | `buildCopy(it, pk)` | **六平台文案差异化的唯一来源**，见 §8.1 |
 | `ai` | `callAI`、`parseJSON`、`aiRecognize`、`aiTranslate` | — |
 | `views` | `renderCapture/renderReview/renderTrack`、`renderToday` | — |
-| `detail` | `openDetail` | 编辑 + 四平台文案 + 发布条 |
+| `detail` | `openDetail` | 编辑 + 六平台文案 + 发布条 |
 | `bridge client` | `checkBridge`、`syncAutoBar`、`publishViaBridge` | **前端唯一与桥接对话的地方** |
 | `report` | `buildReport` | 战报文本 |
 | `settings` / `bind` / `seed` | — | `seed()` 预置 4 条示例（含 1 条失败、1 条挂 19 天） |
 
 ### 8.1 文案差异化策略
 
-同一件物品，四个平台生成**四份不同的文案** —— 平台调性不同，复制粘贴同一份会显得很业余：
+同一件物品，六个平台生成**六份不同的文案** —— 平台调性不同，复制粘贴同一份会显得很业余：
 
 | 平台 | 语言 | 风格 | 特征 |
 |------|------|------|------|
@@ -404,7 +416,7 @@ pending ──发布成功──> posted ──标记成交──> sold
 > 这一节是给未来 AI 的**最重要**部分：解释"为什么不那样做"，避免好心改坏。
 
 ### ADR-001：自动化层做成可选的旁路，而不是必需依赖
-- **背景**：四个平台里只有 Kijiji 有可用的非官方 API，其余必须靠浏览器自动化，而浏览器自动化天然脆弱（平台随时改版）。
+- **背景**：六个平台里只有 Kijiji 有可用的非官方 API，其余必须靠浏览器自动化，而浏览器自动化天然脆弱（平台随时改版）。
 - **决策**：前端**完全不依赖**桥接。桥接在 → 全自动；桥接不在 → 半自动。
 - **理由**：平台改版会让自动化在某天早上突然失效。如果前端强依赖桥接，那天用户就完全没法卖东西了。半自动虽然慢，但**永远不会坏**。
 - **后果**：`buildCopy()` 的产物同时服务两条路径（复制粘贴 / 自动填表），必须保持纯函数、无副作用。
@@ -537,7 +549,7 @@ MCP 由社区维护选择器，比自己维护 Playwright 脚本可持续得多�
 6. **修改后的验证方式**：
    ```bash
    # 提取内联 JS 做语法检查（HTML 单文件无法直接 lint）
-   node -e "const fs=require('fs');const h=fs.readFileSync('outputs/二手转卖工作台.html','utf8');fs.writeFileSync('.check.js',h.match(/<script>([\s\S]*)<\/script>/)[1])"
+   node -e "const fs=require('fs');const h=fs.readFileSync('index.html','utf8');fs.writeFileSync('.check.js',h.match(/<script>([\s\S]*)<\/script>/)[1])"
    node --check .check.js
 
    # 桥接各文件
