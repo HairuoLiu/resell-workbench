@@ -109,6 +109,8 @@ node server.js
 设置里把「服务商」选成 **Ollama（本机）**，地址填 `http://localhost:11434/v1`，Key 留空即可。
 模型推荐 `qwen2.5vl`（识图）、`qwen2.5`（翻译）。
 
+> **现在会自动检测**：打开工作台时，如果本机已经跑着 Ollama，主屏会弹一条绿色横幅、设置里也会出现「一键免 Key 启用」按钮 —— 点一下就帮你配好地址和模型，不用自己填。但前提是 Ollama 是按下面「Windows 第一次必看」的方式启动的（带 `OLLAMA_ORIGINS=*`），否则浏览器连不上、也检测不到。
+
 > ⚠️ **Windows 第一次必看**：用 Ollama 前，要先在命令行跑：
 > ```bash
 > set OLLAMA_ORIGINS=*

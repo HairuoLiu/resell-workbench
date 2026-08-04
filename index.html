@@ -314,6 +314,15 @@ details.adv[open] .adv-sum{margin-bottom:12px}
 .wiz-adv{margin-top:8px;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--line-2)}
 .wiz-adv summary{padding:2px 0;margin-bottom:4px}
 .hide{display:none!important}
+
+/* 本机 Ollama 探测横幅：检测到才显示，一键免 Key 启用 */
+.obar{display:none;align-items:center;gap:10px;padding:11px 14px;margin-top:14px;border-radius:12px;background:var(--brand-l);border:1px solid #a8e6cf;color:var(--brand-d)}
+.obar.on{display:flex}
+.obar .fico{flex:none;color:var(--brand-d)}
+.obar .obar-t{flex:1;min-width:0}
+.obar .obar-t b{font-size:13.5px;display:block}
+.obar .obar-t span{display:block;font-size:12.5px;opacity:.92;margin-top:1px}
+.obar .btn.sm{min-height:40px}
 </style>
 </head>
 <body>
@@ -345,6 +354,14 @@ details.adv[open] .adv-sum{margin-bottom:12px}
 
   <!-- ============ 数据安全 / 示例数据 横幅 ============ -->
   <div id="bars"></div>
+
+  <!-- ============ 本机 Ollama 探测横幅（检测到才出现） ============ -->
+  <div id="ollamaBar" class="obar">
+    <svg class="fico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
+    <div class="obar-t"><b>本机 Ollama 已就绪</b><span>免费、照片不出本机，点一下就能用 AI 识图 / 翻译</span></div>
+    <button class="btn pri sm" id="obarEnable">一键启用</button>
+    <button class="ib" id="obarClose" aria-label="关闭"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
 
   <!-- ============ 今天要处理 ============ -->
   <section id="today"></section>
@@ -506,6 +523,10 @@ details.adv[open] .adv-sum{margin-bottom:12px}
         <datalist id="sModelsT"></datalist>
       </div>
       <p class="muted" id="sProvNote" style="margin:2px 0 0;display:none"></p>
+      <button class="btn pri sm" id="btnEnableOllama" style="display:none;margin-top:10px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
+        本机 Ollama 已检测到 · 一键免 Key 启用
+      </button>
       <div class="row" style="margin-top:12px">
         <button class="btn sm" id="btnTest">测试连接</button>
         <button class="btn sm" id="btnLocalModels" style="display:none">看看本机有哪些模型</button>
@@ -756,10 +777,11 @@ function provFromUrl(u){u=(u||'').trim();const p=PROVIDERS.find(p=>p.url&&p.url=
 function fillDatalist(id,arr){const dl=$('#'+id);if(!dl)return;dl.replaceChildren();arr.forEach(m=>{const o=document.createElement('option');o.value=m;dl.appendChild(o);});}
 
 /* ================= state ================= */
-let items=[], settings={...DEF_SET}, meta={seeded:false,lastBackupCount:0,onboarded:false,lastBackupAt:'',backupSnoozeAt:''};
+let items=[], settings={...DEF_SET}, meta={seeded:false,lastBackupCount:0,onboarded:false,lastBackupAt:'',backupSnoozeAt:'',ollamaDismissed:false};
 let draftPhotos=[];   // {id, thumb, full}
 let curView='capture', detailId=null;
 let ollamaAvailable=false;   // 本机是否检测到 Ollama 在跑（P0-2：没跑就不暴露该选项）
+let ollamaInfo={ok:false,base:'',models:[]};  // 探测到的详情：地址 + 已拉取的模型清单
 
 /* ================= utils ================= */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -1710,7 +1732,12 @@ function openSettings(){
   $('#testMsg').textContent=''; $('#bridgeCheckMsg').textContent=''; $('#loginStatusMsg').textContent='';
   renderChToggles();
   renderStore();
-  detectOllama().then(()=>{initProvUI();if(settings.key)syncProv('s');});
+  detectOllama().then(()=>{
+    initProvUI();
+    if(settings.key) syncProv('s');
+    else if(ollamaInfo.ok){ const sp=$('#sProv'); if(sp){sp.value='ollama';onProvChange('s');} }
+    refreshOllamaUI();
+  });
   $('#mSettings').classList.add('on');
 }
 function applySettings(){
@@ -1751,6 +1778,10 @@ function openWizard(){
   $('#wModelV').value=cfg?settings.modelV:'';
   $('#wModelT').value=cfg?settings.modelT:'';
   if(cfg){ syncProv('w'); } else { const sp=$('#wProv'); if(sp) sp.value='deepseek'; onProvChange('w'); }
+  // 本机装了 Ollama 且还没配云 Key：向导直接默认指向本机，免 Key 起步，少一步配置
+  if(!settings.key){
+    detectOllama().then(()=>{ if(ollamaInfo.ok){ const sp=$('#wProv'); if(sp){sp.value='ollama';onProvChange('w');} } });
+  }
   $('#wTestMsg').textContent='';
   $('#wKeepDemo').checked=items.some(i=>i.demo);
   $('#wKeepDemo').closest('label').style.display=items.some(i=>i.demo)?'flex':'none';
@@ -1827,15 +1858,77 @@ function bindWizard(){
 
 /* ================= bind ================= */
 /* 服务商预设 UI：选服务商 → 自动填 URL + 该家模型；模型框可输入也可从下拉选 */
-/* 探测本机 Ollama 是否在运行：只在检测到时才把 Ollama 暴露给用户，避免误选假死（P0-2 / P1-4） */
+/* 探测本机 Ollama 是否在运行：优先 127.0.0.1（绕开 localhost 在某些机器上的 DNS 怪问题），
+   再回退 localhost。命中后顺手把本机已拉取的模型名一并取回，供「一键启用」自动挑默认模型。
+   只在检测到时才把 Ollama 暴露给用户，避免误选假死（P0-2 / P1-4）。 */
 async function detectOllama(){
-  try{
-    const c=new AbortController(), t=setTimeout(()=>c.abort(),1500);
-    const r=await fetch('http://localhost:11434/api/tags',{signal:c.signal});
-    clearTimeout(t);
-    ollamaAvailable=r.ok;
-  }catch(e){ollamaAvailable=false;}
-  return ollamaAvailable;
+  ollamaInfo={ok:false,base:'http://localhost:11434/v1',models:[]};
+  for(const host of ['127.0.0.1','localhost']){
+    try{
+      const c=new AbortController(), t=setTimeout(()=>c.abort(),1200);
+      const r=await fetch(`http://${host}:11434/api/tags`,{signal:c.signal});
+      clearTimeout(t);
+      if(!r.ok){ollamaAvailable=false;continue;}
+      const j=await r.json().catch(()=>({}));
+      ollamaInfo={ok:true,base:`http://${host}:11434/v1`,
+        models:((j&&j.models)||[]).map(m=>m&&m.name?m.name:(m&&m.model||''))};
+      ollamaAvailable=true; break;
+    }catch(e){ollamaAvailable=false;}
+  }
+  return ollamaInfo;
+}
+/* 从本机模型清单里挑一组最合理的默认：识图优先带 vl/vision 字样的，翻译优先 qwen/llama/gemma 系，
+   且翻译模型绝不挑视觉模型（qwen2.5 是 qwen2.5vl 的子串，不单独排除会误选）。
+   只有一个模型时，识图和翻译都用它（很多本机模型本身就能多模态）。 */
+function pickOllamaModels(models){
+  const names=(models||[]).map(m=>String(m||''));
+  const clean=n=>n.split(':')[0].toLowerCase();
+  const isVis=n=>/vl|vision|llava|minicpm/.test(clean(n));
+  const isTxt=n=>/qwen|llama|gemma|mistral/.test(clean(n));
+  let vision=names.find(isVis)||names.find(isTxt)||names[0]||'';
+  let text=names.find(n=>!isVis(n)&&isTxt(n))||names.find(isTxt)||vision||names[0]||'';
+  return {vision,text};
+}
+/* 一键把配置切到本机 Ollama：免 Key、自动挑最合适的识图/翻译模型。
+   用户不用懂任何术语，点一下就能让「AI 识别照片 / 中译英」直接可用（减少使用摩擦）。 */
+async function enableLocalOllama(){
+  if(!ollamaInfo.ok){ await detectOllama(); }
+  if(!ollamaInfo.ok){ toast('没在本机探测到 Ollama。先在命令行跑 ollama serve，再 ollama pull qwen2.5vl',1); return; }
+  const {vision,text}=pickOllamaModels(ollamaInfo.models);
+  settings.url=ollamaInfo.base;
+  settings.key='';
+  settings.modelV=vision||'qwen2.5vl';
+  settings.modelT=text||'qwen2.5';
+  saveSet();
+  const oll=provByKey('ollama');
+  if($('#sUrl')){
+    $('#sProv').value='ollama';
+    $('#sUrl').value=settings.url; $('#sKey').value='';
+    $('#sModelV').value=settings.modelV; $('#sModelT').value=settings.modelT;
+    fillDatalist('sModelsV',oll.vision); fillDatalist('sModelsT',oll.text);
+    if($('#sProvNote')) applyProvNote('s',oll);
+  }
+  if($('#wUrl')){
+    $('#wProv').value='ollama';
+    $('#wUrl').value=settings.url; $('#wKey').value='';
+    $('#wModelV').value=settings.modelV; $('#wModelT').value=settings.modelT;
+    fillDatalist('wModelsV',oll.vision); fillDatalist('wModelsT',oll.text);
+  }
+  render();
+  const bar=$('#ollamaBar'); if(bar) bar.classList.remove('on');
+  const btn=$('#btnEnableOllama'); if(btn) btn.style.display='none';
+  const tip=(ollamaInfo.models&&ollamaInfo.models.length)
+    ? `本机 Ollama 已启用，免 Key 直接可用（${settings.modelV} / ${settings.modelT}）`
+    : '本机 Ollama 已启用，但还没拉模型 —— 去命令行跑 ollama pull qwen2.5vl';
+  toast(tip);
+}
+/* 根据探测结果刷新两处入口：设置里的「一键启用」按钮 + 主屏横幅。
+   横幅只对新用户（还没配云 Key）出现，已经用着云服务的不会被「切本机」打扰。 */
+function refreshOllamaUI(){
+  const show=ollamaInfo.ok && !isLocalAI(settings.url) && !settings.key;
+  const btn=$('#btnEnableOllama'); if(btn) btn.style.display=show?'':'none';
+  const bar=$('#ollamaBar');
+  if(bar){ if(show && !meta.ollamaDismissed) bar.classList.add('on'); else bar.classList.remove('on'); }
 }
 function initProvUI(){
   ['s','w'].forEach(p=>{
@@ -1925,6 +2018,9 @@ function bind(){
   $('#btnReset').onclick=()=>{if(confirm('清空当前表单和已选照片？'))resetForm()};
 
   $('#btnSettings').onclick=openSettings;
+  $('#btnEnableOllama').onclick=enableLocalOllama;
+  $('#obarEnable').onclick=enableLocalOllama;
+  $('#obarClose').onclick=()=>{meta.ollamaDismissed=true;save();const b=$('#ollamaBar');if(b)b.classList.remove('on');};
   $('#btnSaveSet').onclick=applySettings;
   $('#btnExport').onclick=()=>doExport(true);
   $('#btnExport2').onclick=()=>doExport(true);
@@ -2065,6 +2161,7 @@ $('#fLoc').value=settings.loc;
   detectOllama().then(()=>{
     initProvUI();
     ['s','w'].forEach(p=>{ const sel=$('#'+p+'Prov'); if(sel) applyProvNote(p,provByKey(sel.value)); });
+    refreshOllamaUI();
   });
 })();
 </script>
